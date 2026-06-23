@@ -1,3 +1,10 @@
 uploads/
 .thumbnail/
 Neon Souls Landing.dc.html
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
