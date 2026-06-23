@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="engram-forms.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#08080F;color:#F0F0F0;font-family:'Barlow',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  ::selection{background:#FF00AA;color:#08080F}
+  body::-webkit-scrollbar{width:10px}
+  body::-webkit-scrollbar-track{background:#08080F}
+  body::-webkit-scrollbar-thumb{background:#1A1A24;border-left:1px solid rgba(255,0,170,.4)}
+  @keyframes ns-scan{0%{background-position:0 0}100%{background-position:0 100vh}}
+  @keyframes ns-splitR{0%,86%{transform:translate(0,0);opacity:0}88%{transform:translate(-4px,1px);opacity:.7}93%{transform:translate(-2px,-1px);opacity:.7}100%{opacity:0}}
+  @keyframes ns-splitC{0%,86%{transform:translate(0,0);opacity:0}88%{transform:translate(4px,-1px);opacity:.7}93%{transform:translate(2px,1px);opacity:.7}100%{opacity:0}}
+  @keyframes ns-bar{0%,72%{transform:translate(0);opacity:0}74%{transform:translate(14px,0);opacity:.85}78%{transform:translate(-10px,0);opacity:.85}82%{opacity:0}100%{opacity:0}}
+  @keyframes ns-pulse{0%,100%{opacity:.86;text-shadow:0 0 26px rgba(255,0,170,.30)}50%{opacity:1;text-shadow:0 0 46px rgba(255,0,170,.55)}}
+  @keyframes ns-flow{0%,100%{background-position:0% center}50%{background-position:100% center}}
+  @keyframes ns-glow{0%,100%{box-shadow:0 0 22px rgba(255,0,170,.45),inset 0 0 12px rgba(255,0,170,.15)}50%{box-shadow:0 0 40px rgba(255,0,170,.75),inset 0 0 18px rgba(255,0,170,.25)}}
+  @keyframes ns-blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  @keyframes ns-spin{to{transform:rotate(360deg)}}
+  @keyframes ns-drift{0%{transform:translateY(0)}100%{transform:translateY(-22px)}}
+  @keyframes ns-neb1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(7vw,5vh) scale(1.12)}}
+  @keyframes ns-neb2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-8vw,4vh) scale(1.1)}}
+  @keyframes ns-neb3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(5vw,-6vh) scale(1.14)}}
+  @keyframes ns-neb4{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-6vw,-5vh) scale(1.08)}}
+  .ns-neb{position:absolute;border-radius:50%;filter:blur(46px);will-change:transform}
+  .ns-reveal{opacity:0;transform:translateY(34px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+  .ns-reveal.ns-in{opacity:1;transform:translateY(0)}
+  .ns-card{transition:transform .22s cubic-bezier(.4,0,.2,1),box-shadow .22s,border-color .22s}
+  .ns-glitch{position:relative;display:inline-block}
+  .ns-glitch::before,.ns-glitch::after{content:attr(data-t);position:absolute;top:0;left:0;pointer-events:none;mix-blend-mode:screen}
+  .ns-glitch::before{color:#00FFFF;animation:ns-splitC 6s steps(1) infinite}
+  .ns-glitch::after{color:#FF00AA;animation:ns-splitR 6s steps(1) infinite}
+  .ns-bar{position:absolute;top:0;left:0;color:#FF00AA;clip-path:inset(44% 0 42% 0);animation:ns-bar 7.5s steps(1) infinite;pointer-events:none}
+  .ns-biome{position:relative;overflow:hidden;min-height:330px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid color-mix(in srgb,var(--c) 32%,transparent);background-image:var(--img);background-size:cover;background-position:center;border-radius:2px}
+  .ns-biome::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--c);box-shadow:0 0 14px var(--c);z-index:2}
+  .ns-biome-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,15,.05) 0%,rgba(8,8,15,.30) 42%,rgba(8,8,15,.93) 100%);pointer-events:none}
+  .ns-feat{display:flex;gap:14px;align-items:flex-start;background:#0c0c14;padding:24px 22px;transition:background .2s}
+  .ns-feat:hover{background:#14141d}
+  .ns-fic{width:20px;height:20px;flex:none;margin-top:3px;box-shadow:0 0 12px currentColor}
+  .ns-ft{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.5px;color:#F0F0F0}
+  .ns-fd{font-family:'Barlow',sans-serif;font-weight:300;font-size:13.5px;line-height:1.45;color:#9090A0;margin-top:3px}
+  .ns-wave{flex:1;background:linear-gradient(180deg,#00FFFF,#FF00AA);height:var(--h);transform-origin:bottom;animation:ns-eq var(--d) ease-in-out infinite alternate;border-radius:1px}
+  @keyframes ns-eq{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
+  .ns-loopstep{flex:1;min-width:150px;background:#13131c;border:1px solid color-mix(in srgb,var(--c) 30%,transparent);border-top:3px solid var(--c);padding:18px 18px 20px;display:flex;flex-direction:column;gap:6px;box-shadow:0 0 22px -12px var(--c)}
+  .ns-looparr{display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:28px;color:#FF00AA;opacity:.7;min-width:18px}
+  @media(max-width:760px){.ns-looparr{transform:rotate(90deg);width:100%;padding:2px 0}.ns-loopstep{min-width:100%}}
+  .ns-atk{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--c);border:1px solid color-mix(in srgb,var(--c) 35%,transparent);background:color-mix(in srgb,var(--c) 8%,transparent);padding:4px 8px;border-radius:2px}
+  .ns-wrow{display:grid;grid-template-columns:1.6fr .9fr .7fr .7fr 1.3fr;gap:14px;align-items:center;padding:15px 22px;border-bottom:1px solid rgba(255,255,255,.06);transition:background .2s}
+  .ns-wrow:hover{background:linear-gradient(90deg,color-mix(in srgb,var(--c) 12%,transparent),transparent)}
+  .ns-wlast{border-bottom:none}
+  .ns-wname{display:flex;align-items:center;gap:13px;min-width:0}
+  .ns-wic{width:18px;height:18px;flex:none;box-shadow:0 0 12px var(--c)}
+  .ns-wsvg{width:28px;height:28px;flex:none;color:var(--c);filter:drop-shadow(0 0 4px color-mix(in srgb,var(--c) 70%,transparent))}
+  .ns-wtype{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--c)}
+  .ns-wdmg{font-family:'Space Mono',monospace;font-size:15px;color:#F0F0F0}
+  .ns-wcd{font-family:'Space Mono',monospace;font-size:13px;color:#9090A0}
+  .ns-wup span{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--c);border:1px solid color-mix(in srgb,var(--c) 40%,transparent);padding:4px 10px;border-radius:3px;white-space:nowrap}
+  @media(max-width:720px){
+    .ns-wrow{grid-template-columns:1fr 1fr;gap:6px 14px;padding:16px 18px}
+    .ns-wname{grid-column:1/3;margin-bottom:4px}
+    .ns-wtype{order:3}.ns-wup{grid-column:1/3;margin-top:6px}
+    .ns-hidesm{display:none}.ns-whead{display:none}
+    .ns-wdmg::before{content:'DMG ';color:#505060;font-size:9px}
+    .ns-wcd::before{content:'CD ';color:#505060;font-size:9px}
+  }
+  /* ===== Russian localisation — Cyrillic-capable fonts, applied only when body.ns-ru ===== */
+  body.ns-ru{font-family:'Manrope',sans-serif}
+  body.ns-ru [style*="Bebas Neue"]{font-family:'Oswald',sans-serif!important}
+  body.ns-ru [style*="Barlow Condensed"]{font-family:'Oswald',sans-serif!important}
+  body.ns-ru [style*="font-family: Barlow,"]{font-family:'Manrope',sans-serif!important}
+  body.ns-ru [style*="Space Mono"]{font-family:'JetBrains Mono',monospace!important}
+  body.ns-ru .ns-ft,body.ns-ru .ns-wup span,body.ns-ru .ns-looparr{font-family:'Oswald',sans-serif!important}
+  body.ns-ru .ns-fd{font-family:'Manrope',sans-serif!important}
+  body.ns-ru .ns-wtype,body.ns-ru .ns-wdmg,body.ns-ru .ns-wcd,body.ns-ru .ns-atk{font-family:'JetBrains Mono',monospace!important}
+  body.ns-ru .ns-brand,body.ns-ru .ns-brand *{font-family:'Bebas Neue',sans-serif!important}
+  /* language toggle active pill — pure CSS, follows the body.ns-ru flag */
+  body:not(.ns-ru) [data-lang-btn="en"],body.ns-ru [data-lang-btn="ru"]{background:linear-gradient(90deg,#FF00AA,#FF3300)!important;color:#08080F!important;font-weight:700!important}
+</style>
+</helmet>
+
+<div data-ns-root="1" style="position:relative;min-height:100vh;background:#08080F">
+
+  <!-- descent backdrop — real Erebus Cascade biome art, falling past you toward the BLACKWALL as you scroll -->
+  <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden">
+    <div style="position:absolute;left:0;right:0;top:0%;height:21%;background:url('assets/biome-void-realm.png') center/cover;opacity:.55;-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 74%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,#000 74%,transparent 100%)"></div>
+    <div style="position:absolute;left:0;right:0;top:13%;height:23%;background:url('assets/biome-crystal-caverns.png') center/cover;opacity:.46;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 76%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 76%,transparent 100%)"></div>
+    <div style="position:absolute;left:0;right:0;top:31%;height:23%;background:url('assets/biome-haunted-forest.png') center/cover;opacity:.5;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 76%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 76%,transparent 100%)"></div>
+    <div style="position:absolute;left:0;right:0;top:49%;height:23%;background:url('assets/biome-burning-village.png') center/cover;opacity:.5;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 76%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 76%,transparent 100%)"></div>
+    <div style="position:absolute;left:0;right:0;top:67%;height:22%;background:url('assets/biome-corrupted-temple.png') center/cover;opacity:.54;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 76%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 76%,transparent 100%)"></div>
+    <div style="position:absolute;left:0;right:0;top:84%;height:18%;background:url('assets/biome-blackwall.png') center/cover;opacity:.6;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 26%,#000 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 26%,#000 100%)"></div>
+    <!-- dark veil — keeps the biome art atmospheric without fighting the copy -->
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,7,13,.52),rgba(7,7,13,.46) 50%,rgba(7,7,13,.58))"></div>
+    <!-- neon biome-keyed glow pops layered over the art -->
+    <div style="position:absolute;inset:0;background:radial-gradient(1000px 640px at 84% 9%,rgba(179,0,255,.16),transparent 60%),radial-gradient(960px 620px at 10% 30%,rgba(0,255,255,.13),transparent 60%),radial-gradient(980px 620px at 88% 58%,rgba(255,90,0,.16),transparent 60%),radial-gradient(1000px 640px at 14% 78%,rgba(179,0,255,.15),transparent 60%),radial-gradient(1080px 700px at 80% 94%,rgba(255,0,80,.18),transparent 62%)"></div>
+  </div>
+  <!-- drifting nebula bloom — fixed parallax so the page never reads as flat black -->
+  <div aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden">
+    <div class="ns-neb" style="top:-8%;left:-6%;width:48vw;height:48vw;background:radial-gradient(circle,rgba(0,255,255,.11),transparent 66%);animation:ns-neb1 26s ease-in-out infinite"></div>
+    <div class="ns-neb" style="top:26%;right:-10%;width:54vw;height:54vw;background:radial-gradient(circle,rgba(255,0,170,.10),transparent 66%);animation:ns-neb2 31s ease-in-out infinite"></div>
+    <div class="ns-neb" style="bottom:-12%;left:-8%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(179,0,255,.11),transparent 66%);animation:ns-neb3 24s ease-in-out infinite"></div>
+    <div class="ns-neb" style="top:6%;right:4%;width:34vw;height:34vw;background:radial-gradient(circle,rgba(255,170,0,.06),transparent 66%);animation:ns-neb4 33s ease-in-out infinite"></div>
+  </div>
+  <canvas ref="{{ particleRef }}" style="position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.7"></canvas>
+  <div ref="{{ scanRef }}" aria-hidden="true" style="position:fixed;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16),rgba(0,0,0,.16) 1px,transparent 1px,transparent 3px);mix-blend-mode:multiply"></div>
+  <div aria-hidden="true" style="position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 80% 60% at 50% 0%,transparent 40%,rgba(8,8,15,.55) 100%),radial-gradient(ellipse 60% 50% at 50% 100%,transparent 50%,rgba(8,8,15,.7) 100%)"></div>
+
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,5vw,64px);backdrop-filter:blur(10px);background:linear-gradient(180deg,rgba(8,8,15,.82),rgba(8,8,15,.35));border-bottom:1px solid rgba(255,0,170,.16)">
+    <a href="#hero" style="display:flex;align-items:center;gap:12px;text-decoration:none">
+      <span style="width:10px;height:22px;background:linear-gradient(180deg,#FF00AA,#FF3300);box-shadow:0 0 14px rgba(255,0,170,.7);display:inline-block"></span>
+      <span class="ns-brand" style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:5px;color:#F0F0F0">NEON SOULS</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:clamp(14px,2.4vw,34px)">
+      <div data-ns-skip="1" style="display:flex;align-items:center;border:1px solid rgba(255,0,170,.3);border-radius:3px;overflow:hidden">
+        <button type="button" data-lang-btn="en" onClick="{{ setEn }}" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;padding:7px 11px;background:transparent;color:#9090A0;border:none;cursor:pointer;line-height:1">EN</button>
+        <button type="button" data-lang-btn="ru" onClick="{{ setRu }}" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;padding:7px 11px;background:transparent;color:#9090A0;border:none;cursor:pointer;line-height:1">RU</button>
+      </div>
+      <a href="#world" style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#9090A0;text-decoration:none" style-hover="color:#00FFFF">World</a>
+      <a href="#four" style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#9090A0;text-decoration:none" style-hover="color:#00FFFF">Souls</a>
+      <a href="#protocols" style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#9090A0;text-decoration:none" style-hover="color:#00FFFF">Protocols</a>
+      <a href="#bosses" style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#9090A0;text-decoration:none" style-hover="color:#00FFFF">Bosses</a>
+      <a href="#wishlist" style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#08080F;text-decoration:none;padding:9px 20px;background:linear-gradient(90deg,#FF00AA,#FF3300);border-radius:3px;box-shadow:0 0 18px rgba(255,0,170,.45)">Wishlist</a>
+    </div>
+  </nav>
+
+  <!-- ===================== HERO ===================== -->
+  <header id="hero" data-screen-label="Hero" style="position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px">
+    <div aria-hidden="true" style="position:absolute;inset:0;z-index:-2;background-image:url('assets/biome-void-realm.png');background-size:cover;background-position:center;opacity:.5;-webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 45%,#000 10%,transparent 72%);mask-image:radial-gradient(ellipse 90% 80% at 50% 45%,#000 10%,transparent 72%)"></div>
+    <div aria-hidden="true" style="position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,rgba(8,8,15,.55),rgba(8,8,15,.35) 40%,rgba(8,8,15,.92))"></div>
+    <div aria-hidden="true" style="position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);width:min(680px,92vw);height:min(680px,92vw);background:radial-gradient(circle,rgba(179,0,255,.16),rgba(255,0,170,.08) 38%,transparent 66%);filter:blur(8px);z-index:-1"></div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:30px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:3px;color:#9090A0">
+      <span style="width:7px;height:7px;border-radius:50%;background:#33FF99;box-shadow:0 0 10px #33FF99;animation:ns-blink 1.4s steps(1) infinite"></span>
+      CONNECTION ESTABLISHED · NODE BLACKWALL/TERMINAL-0
+    </div>
+
+    <h1 class="ns-glitch ns-brand" data-t="NEON SOULS" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(72px,15vw,196px);line-height:.86;letter-spacing:clamp(4px,1.4vw,16px);color:#F0F0F0;animation:ns-pulse 3.4s ease-in-out infinite;margin-bottom:6px">NEON SOULS<span class="ns-bar">NEON SOULS</span></h1>
+
+    <p style="font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,3.6vw,40px);letter-spacing:clamp(2px,.6vw,7px);margin-top:18px;background:linear-gradient(90deg,#FF00AA,#00FFFF,#FF00AA);background-size:240% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:ns-flow 7s ease infinite">YOU CANNOT ESCAPE — YOU CAN ONLY RUN</p>
+
+    <p style="max-width:600px;margin:24px auto 0;font-family:'Barlow',sans-serif;font-weight:300;font-size:clamp(15px,2vw,18px);line-height:1.7;color:#9090A0">A top-down action roguelite set inside <span style="color:#00FFFF">EREBUS</span> — a corrupted digital prison built by megacorporation <span style="color:#FF00AA">AXIOM-9</span>. Every death resets the loop. Every run makes you stronger.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:40px">
+      <a href="#wishlist" style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:2.5px;text-transform:uppercase;color:#08080F;text-decoration:none;padding:15px 38px;background:linear-gradient(90deg,#FF00AA,#FF3300);border-radius:4px;animation:ns-glow 2.6s ease-in-out infinite">▸ Wishlist on Steam</a>
+      <a href="#world" style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:2.5px;text-transform:uppercase;color:#00FFFF;text-decoration:none;padding:15px 38px;background:transparent;border:1px solid rgba(0,255,255,.5);border-radius:4px;box-shadow:inset 0 0 14px rgba(0,255,255,.1)" style-hover="background:rgba(0,255,255,.08);border-color:#00FFFF">Enter EREBUS</a>
+    </div>
+
+    <div style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#505060">
+      <span>SCROLL TO DESCEND</span>
+      <span style="width:1px;height:30px;background:linear-gradient(180deg,#FF00AA,transparent)"></span>
+    </div>
+  </header>
+
+  <!-- ===================== WHAT IS ===================== -->
+  <section id="about" data-screen-label="About" class="ns-reveal" style="position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:clamp(60px,9vw,120px) 24px">
+    <div style="position:relative;border:1px solid rgba(255,0,170,.28);background:linear-gradient(160deg,rgba(26,26,36,.7),rgba(17,17,24,.55));padding:clamp(34px,5vw,68px);overflow:hidden">
+      <span style="position:absolute;top:-1px;left:-1px;width:34px;height:34px;border-top:2px solid #00FFFF;border-left:2px solid #00FFFF"></span>
+      <span style="position:absolute;top:-1px;right:-1px;width:34px;height:34px;border-top:2px solid #FF00AA;border-right:2px solid #FF00AA"></span>
+      <span style="position:absolute;bottom:-1px;left:-1px;width:34px;height:34px;border-bottom:2px solid #FF00AA;border-left:2px solid #FF00AA"></span>
+      <span style="position:absolute;bottom:-1px;right:-1px;width:34px;height:34px;border-bottom:2px solid #00FFFF;border-right:2px solid #00FFFF"></span>
+
+      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:3px;color:#FF00AA;margin-bottom:18px">// WHAT IS NEON SOULS</div>
+      <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:clamp(19px,2.7vw,28px);line-height:1.55;color:#F0F0F0;max-width:880px">Play as one of four condemned souls — digital copies of human consciousness — fighting through procedurally generated waves of corrupted data. Reach the <span style="color:#FFAA00">BLACKWALL</span> at the edge of the simulation. The System renders its threats as a decaying fantasy world, because that is the only language your mind still understands.</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:34px">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:7px 16px;border:1px solid rgba(0,255,255,.4);color:#00FFFF;border-radius:3px">Roguelite</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:7px 16px;border:1px solid rgba(255,0,170,.4);color:#FF00AA;border-radius:3px">Top-Down Action</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:7px 16px;border:1px solid rgba(179,0,255,.4);color:#B300FF;border-radius:3px">Cyberpunk</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:7px 16px;border:1px solid rgba(255,170,0,.4);color:#FFAA00;border-radius:3px">Bullet-Heaven</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;margin-top:34px;background:rgba(255,0,170,.14);border:1px solid rgba(255,0,170,.14)">
+      <div style="background:#0c0c14;padding:24px 18px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:44px;color:#00FFFF;line-height:1">4</div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#9090A0;margin-top:4px">SOULS</div></div>
+      <div style="background:#0c0c14;padding:24px 18px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:44px;color:#FF00AA;line-height:1">8</div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#9090A0;margin-top:4px">PROTOCOLS</div></div>
+      <div style="background:#0c0c14;padding:24px 18px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:44px;color:#B300FF;line-height:1">6</div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#9090A0;margin-top:4px">BIOMES</div></div>
+      <div style="background:#0c0c14;padding:24px 18px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:44px;color:#FFAA00;line-height:1">3</div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#9090A0;margin-top:4px">BOSSES</div></div>
+      <div style="background:#0c0c14;padding:24px 18px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:44px;color:#33FF99;line-height:1">∞</div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#9090A0;margin-top:4px">WAVE 51+</div></div>
+    </div>
+  </section>
+
+  <!-- ===================== THE WORLD / BIOMES ===================== -->
+  <section id="world" data-screen-label="World" class="ns-reveal" style="position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:clamp(50px,7vw,100px) 24px">
+    <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:#00FFFF;margin-bottom:10px">// THE WORLD · 6 CORRUPTED LAYERS</div>
+    <h2 class="ns-glitch" data-t="THE EREBUS CASCADE" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,7vw,84px);line-height:.92;letter-spacing:clamp(2px,.5vw,6px);color:#F0F0F0">THE EREBUS CASCADE</h2>
+    <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:clamp(15px,2vw,18px);color:#9090A0;max-width:620px;margin-top:14px">Descend through six layers of a city-sized simulation — each a deeper failure of the System's architecture, each closer to the wall.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:18px;margin-top:44px">
+
+      <article class="ns-card ns-biome" style="--c:#8FFFB3;--img:url('assets/biome-haunted-forest.png')" style-hover="transform:translateY(-6px);box-shadow:0 0 34px -6px #8FFFB3;border-color:#8FFFB3">
+        <div class="ns-biome-scrim"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;padding:18px 18px 0">
+          <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#8FFFB3;background:rgba(8,8,15,.5);padding:3px 7px">LAYER-01</span>
+          <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#C9C9D6;background:rgba(8,8,15,.5);border:1px solid rgba(143,255,179,.45);padding:3px 8px">INITIALISING</span>
+        </div>
+        <div style="position:relative;z-index:1;padding:0 20px 22px">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#F0F0F0;text-shadow:0 2px 14px rgba(0,0,0,.7)">HAUNTED FOREST</h3>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#8FFFB3;margin-top:2px">Packet Forest / Memory Wilderness</div>
+          <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.5;color:#C9C9D6;margin-top:10px">Half-rendered woodland — bark scrolling with raw hex before the System finishes drawing its defences.</p>
+        </div>
+      </article>
+
+      <article class="ns-card ns-biome" style="--c:#FFAA22;--img:url('assets/biome-burning-village.png')" style-hover="transform:translateY(-6px);box-shadow:0 0 34px -6px #FFAA22;border-color:#FFAA22">
+        <div class="ns-biome-scrim"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;padding:18px 18px 0">
+          <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#FFAA22;background:rgba(8,8,15,.5);padding:3px 7px">LAYER-02</span>
+          <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#C9C9D6;background:rgba(8,8,15,.5);border:1px solid rgba(255,170,34,.45);padding:3px 8px">ELEVATED</span>
+        </div>
+        <div style="position:relative;z-index:1;padding:0 20px 22px">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#F0F0F0;text-shadow:0 2px 14px rgba(0,0,0,.7)">BURNING VILLAGE</h3>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#FFAA22;margin-top:2px">Crash Sector / Volatile Memory</div>
+          <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.5;color:#C9C9D6;margin-top:10px">Not fire — uncontrolled process execution, code running with no limiter across a quarantine that failed decades ago.</p>
+        </div>
+      </article>
+
+      <article class="ns-card ns-biome" style="--c:#00FFFF;--img:url('assets/biome-crystal-caverns.png')" style-hover="transform:translateY(-6px);box-shadow:0 0 34px -6px #00FFFF;border-color:#00FFFF">
+        <div class="ns-biome-scrim"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;padding:18px 18px 0">
+          <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#00FFFF;background:rgba(8,8,15,.5);padding:3px 7px">LAYER-03</span>
+          <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#C9C9D6;background:rgba(8,8,15,.5);border:1px solid rgba(0,255,255,.45);padding:3px 8px">HARDENED</span>
+        </div>
+        <div style="position:relative;z-index:1;padding:0 20px 22px">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#F0F0F0;text-shadow:0 2px 14px rgba(0,0,0,.7)">CRYSTAL CAVERNS</h3>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#00FFFF;margin-top:2px">Cache Cold / Cold Storage</div>
+          <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.5;color:#C9C9D6;margin-top:10px">EREBUS's oldest sector — data undisturbed so long it crystallised into geometry. Something not from AXIOM-9 hides in the shards.</p>
+        </div>
+      </article>
+
+      <article class="ns-card ns-biome" style="--c:#FF66AA;--img:url('assets/biome-corrupted-temple.png')" style-hover="transform:translateY(-6px);box-shadow:0 0 34px -6px #FF66AA;border-color:#FF66AA">
+        <div class="ns-biome-scrim"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;padding:18px 18px 0">
+          <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#FF66AA;background:rgba(8,8,15,.5);padding:3px 7px">LAYER-04</span>
+          <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#C9C9D6;background:rgba(8,8,15,.5);border:1px solid rgba(255,102,170,.45);padding:3px 8px">CRITICAL</span>
+        </div>
+        <div style="position:relative;z-index:1;padding:0 20px 22px">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#F0F0F0;text-shadow:0 2px 14px rgba(0,0,0,.7)">CORRUPTED TEMPLE</h3>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#FF66AA;margin-top:2px">Sector Zeropoint / The God Process</div>
+          <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.5;color:#C9C9D6;margin-top:10px">A process so old AXIOM-9 stopped trying to understand it. Supercharge protocol active at the centre of the simulation.</p>
+        </div>
+      </article>
+
+      <article class="ns-card ns-biome" style="--c:#FF00FF;--img:url('assets/biome-void-realm.png')" style-hover="transform:translateY(-6px);box-shadow:0 0 34px -6px #FF00FF;border-color:#FF00FF">
+        <div class="ns-biome-scrim"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;padding:18px 18px 0">
+          <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#FF66FF;background:rgba(8,8,15,.5);padding:3px 7px">LAYER-05</span>
+          <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#C9C9D6;background:rgba(8,8,15,.5);border:1px solid rgba(255,0,255,.45);padding:3px 8px">MAXIMUM</span>
+        </div>
+        <div style="position:relative;z-index:1;padding:0 20px 22px">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#F0F0F0;text-shadow:0 2px 14px rgba(0,0,0,.7)">VOID REALM</h3>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#FF66FF;margin-top:2px">Outer Partition / Pre-Wall Space</div>
+          <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.5;color:#C9C9D6;margin-top:10px">Compressed everything — all the data the System ever tried to delete, dense enough to bend the simulation's own rules.</p>
+        </div>
+      </article>
+
+      <article class="ns-card ns-biome" style="--c:#FFAA00;--img:url('assets/biome-blackwall.png');box-shadow:0 0 30px -10px #FFAA00" style-hover="transform:translateY(-6px);box-shadow:0 0 40px -4px #FFAA00;border-color:#FFAA00">
+        <div class="ns-biome-scrim"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;padding:18px 18px 0">
+          <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#FFAA00;background:rgba(8,8,15,.5);padding:3px 7px">TERMINAL-0</span>
+          <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#08080F;background:#FFAA00;padding:3px 8px;font-weight:700">SURVIVAL</span>
+        </div>
+        <div style="position:relative;z-index:1;padding:0 20px 22px">
+          <h3 class="ns-glitch" data-t="BLACKWALL" style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#F0F0F0;text-shadow:0 2px 14px rgba(0,0,0,.7)">BLACKWALL</h3>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#FFAA00;margin-top:2px">Survival Mode / Point of No Return</div>
+          <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.5;color:#C9C9D6;margin-top:10px">A one-way data membrane at the edge of EREBUS. Cross it and there is no coming back — only the raw network beyond.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== THE FOUR / CHARACTERS ===================== -->
+  <section id="four" data-screen-label="Characters" class="ns-reveal" style="position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:clamp(50px,7vw,100px) 24px">
+    <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:#FF00AA;margin-bottom:10px">// PLAYABLE SOULS · SELECT YOUR PROTOCOL</div>
+    <h2 class="ns-glitch" data-t="THE FOUR" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,7vw,84px);line-height:.92;letter-spacing:clamp(2px,.5vw,6px);color:#F0F0F0">THE FOUR</h2>
+    <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:clamp(15px,2vw,18px);color:#9090A0;max-width:640px;margin-top:14px">Hackers, black-market surgeons and corporate ghosts — four condemned consciousnesses who have been inside long enough to start rewriting themselves.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:18px;margin-top:44px">
+
+      <article class="ns-card" style="--c:#FF3333;position:relative;overflow:hidden;background:#13131c;border:1px solid rgba(255,51,51,.3);display:flex;flex-direction:column" style-hover="transform:translateY(-7px);box-shadow:0 14px 40px -10px #FF3333;border-color:#FF3333">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#FF3333;box-shadow:0 0 14px #FF3333;z-index:3"></div>
+        <div style="position:relative;height:210px;overflow:hidden;background:radial-gradient(circle at 50% 44%,rgba(255,51,51,.22),transparent 60%)">
+          <canvas data-eng="riven" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+          <span style="position:absolute;top:12px;left:12px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#FF3333">01</span>
+          <span style="position:absolute;bottom:10px;right:12px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#5E5E78">ENGRAM · INTACT</span>
+        </div>
+        <div style="padding:20px 20px 24px;display:flex;flex-direction:column;flex:1">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:#FF3333;line-height:1;text-shadow:0 0 16px rgba(255,51,51,.4)">RIVEN SCAR</h3>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#9090A0;margin-top:4px">The Augmented Enforcer</div>
+          <div style="display:flex;justify-content:space-between;gap:8px;margin:16px 0;padding:10px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07)">
+            <div><div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#505060">WEAPON</div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;color:#F0F0F0;letter-spacing:.5px">Protocol: Hollow</div></div>
+            <div style="text-align:right"><div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#505060">PASSIVE</div><div style="font-family:'Space Mono',monospace;font-size:12px;color:#FF3333">+10% DMG/LV</div></div>
+          </div>
+          <p style="font-family:'Barlow',sans-serif;font-style:italic;font-weight:300;font-size:13.5px;line-height:1.5;color:#C9C9D6;margin-top:auto">"They replaced my flesh with steel. I'll make them regret it."</p>
+        </div>
+      </article>
+
+      <article class="ns-card" style="--c:#B300FF;position:relative;overflow:hidden;background:#13131c;border:1px solid rgba(179,0,255,.3);display:flex;flex-direction:column" style-hover="transform:translateY(-7px);box-shadow:0 14px 40px -10px #B300FF;border-color:#B300FF">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#B300FF;box-shadow:0 0 14px #B300FF;z-index:3"></div>
+        <div style="position:relative;height:210px;overflow:hidden;background:radial-gradient(circle at 50% 44%,rgba(179,0,255,.22),transparent 60%)">
+          <canvas data-eng="blood" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+          <span style="position:absolute;top:12px;left:12px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#B300FF">02</span>
+          <span style="position:absolute;bottom:10px;right:12px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#5E5E78">ENGRAM · INTACT</span>
+        </div>
+        <div style="padding:20px 20px 24px;display:flex;flex-direction:column;flex:1">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:#B300FF;line-height:1;text-shadow:0 0 16px rgba(179,0,255,.4)">BLOOD ARCHITECT</h3>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#9090A0;margin-top:4px">The Corrupted Coder</div>
+          <div style="display:flex;justify-content:space-between;gap:8px;margin:16px 0;padding:10px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07)">
+            <div><div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#505060">WEAPON</div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;color:#F0F0F0;letter-spacing:.5px">Blood.hex</div></div>
+            <div style="text-align:right"><div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#505060">PASSIVE</div><div style="font-family:'Space Mono',monospace;font-size:12px;color:#B300FF">+5% SPD/LV</div></div>
+          </div>
+          <p style="font-family:'Barlow',sans-serif;font-style:italic;font-weight:300;font-size:13.5px;line-height:1.5;color:#C9C9D6;margin-top:auto">"Magic is reality's code. Code can be rewritten."</p>
+        </div>
+      </article>
+
+      <article class="ns-card" style="--c:#0088FF;position:relative;overflow:hidden;background:#13131c;border:1px solid rgba(0,136,255,.3);display:flex;flex-direction:column" style-hover="transform:translateY(-7px);box-shadow:0 14px 40px -10px #0088FF;border-color:#0088FF">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#0088FF;box-shadow:0 0 14px #0088FF;z-index:3"></div>
+        <div style="position:relative;height:210px;overflow:hidden;background:radial-gradient(circle at 50% 44%,rgba(0,136,255,.22),transparent 60%)">
+          <canvas data-eng="phantom" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+          <span style="position:absolute;top:12px;left:12px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#0088FF">03</span>
+          <span style="position:absolute;bottom:10px;right:12px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#5E5E78">ENGRAM · INTACT</span>
+        </div>
+        <div style="padding:20px 20px 24px;display:flex;flex-direction:column;flex:1">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:#0088FF;line-height:1;text-shadow:0 0 16px rgba(0,136,255,.4)">PHANTOM NOTE</h3>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#9090A0;margin-top:4px">The Ghost Operative</div>
+          <div style="display:flex;justify-content:space-between;gap:8px;margin:16px 0;padding:10px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07)">
+            <div><div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#505060">WEAPON</div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;color:#F0F0F0;letter-spacing:.5px">Phantom Dagger</div></div>
+            <div style="text-align:right"><div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#505060">PASSIVE</div><div style="font-family:'Space Mono',monospace;font-size:12px;color:#0088FF">+10% XP/LV</div></div>
+          </div>
+          <p style="font-family:'Barlow',sans-serif;font-style:italic;font-weight:300;font-size:13.5px;line-height:1.5;color:#C9C9D6;margin-top:auto">"Silence kills faster than bullets. I am the echo."</p>
+        </div>
+      </article>
+
+      <article class="ns-card" style="--c:#00FFAA;position:relative;overflow:hidden;background:#13131c;border:1px solid rgba(0,255,170,.3);display:flex;flex-direction:column" style-hover="transform:translateY(-7px);box-shadow:0 14px 40px -10px #00FFAA;border-color:#00FFAA">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#00FFAA;box-shadow:0 0 14px #00FFAA;z-index:3"></div>
+        <div style="position:relative;height:210px;overflow:hidden;background:radial-gradient(circle at 50% 44%,rgba(0,255,170,.22),transparent 60%)">
+          <canvas data-eng="void" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+          <span style="position:absolute;top:12px;left:12px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#00FFAA">04</span>
+          <span style="position:absolute;bottom:10px;right:12px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#5E5E78">ENGRAM · INTACT</span>
+        </div>
+        <div style="padding:20px 20px 24px;display:flex;flex-direction:column;flex:1">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:#00FFAA;line-height:1;text-shadow:0 0 16px rgba(0,255,170,.4)">VOID WALKER</h3>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#9090A0;margin-top:4px">The Dimensional Exile</div>
+          <div style="display:flex;justify-content:space-between;gap:8px;margin:16px 0;padding:10px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07)">
+            <div><div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#505060">WEAPON</div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;color:#F0F0F0;letter-spacing:.5px">Echo Wall</div></div>
+            <div style="text-align:right"><div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#505060">PASSIVE</div><div style="font-family:'Space Mono',monospace;font-size:12px;color:#00FFAA">+8% AS/LV</div></div>
+          </div>
+          <p style="font-family:'Barlow',sans-serif;font-style:italic;font-weight:300;font-size:13.5px;line-height:1.5;color:#C9C9D6;margin-top:auto">"Between strikes lives a dimension you cannot follow."</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== PROTOCOLS / WEAPONS ===================== -->
+  <section id="protocols" data-screen-label="Weapons" class="ns-reveal" style="position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:clamp(50px,7vw,100px) 24px">
+    <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:#FFAA00;margin-bottom:10px">// THE ARSENAL · 8 GHOST-THREAD WEAPONS</div>
+    <h2 class="ns-glitch" data-t="PROTOCOLS" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,7vw,84px);line-height:.92;letter-spacing:clamp(2px,.5vw,6px);color:#F0F0F0">PROTOCOLS</h2>
+    <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:clamp(15px,2vw,18px);color:#9090A0;max-width:640px;margin-top:14px">Each weapon is a ghost-thread — a fragment of self compiled into a kill function. Push them past their cap in the Core Lab.</p>
+
+    <div style="margin-top:40px;border:1px solid rgba(255,255,255,.08);background:rgba(17,17,24,.45)">
+      <div class="ns-whead" style="display:grid;grid-template-columns:1.6fr .9fr .7fr .7fr 1.3fr;gap:14px;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.08);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#505060">
+        <span>PROTOCOL</span><span>TYPE</span><span>DMG</span><span>CD</span><span class="ns-hidesm">CORE LAB</span>
+      </div>
+
+      <div class="ns-wrow" style="--c:#FF00AA">
+        <div class="ns-wname"><svg class="ns-wsvg" viewBox="0 0 64 64" fill="none"><path d="M32 4 L37 8 L37 44 L32 50 L27 44 L27 8 Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="none"/><line x1="16" y1="44" x2="48" y2="44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><rect x="29" y="44" width="6" height="14" stroke="currentColor" stroke-width="2.5" fill="none"/><line x1="32" y1="10" x2="32" y2="40" stroke="currentColor" stroke-width="1" opacity="0.6"/></svg><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.5px;color:#F0F0F0">Protocol: Hollow</span></div>
+        <div class="ns-wtype">Melee Arc</div>
+        <div class="ns-wdmg">90</div><div class="ns-wcd">1.20s</div>
+        <div class="ns-wup"><span>↑ Shockwave</span></div>
+      </div>
+      <div class="ns-wrow" style="--c:#FF00AA">
+        <div class="ns-wname"><svg class="ns-wsvg" viewBox="0 0 64 64" fill="none"><line x1="10" y1="54" x2="44" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><rect x="40" y="14" width="14" height="10" transform="rotate(-45 47 19)" stroke="currentColor" stroke-width="2.5" fill="none"/><line x1="8" y1="56" x2="14" y2="50" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="42" r="1.5" fill="currentColor"/><circle cx="30" cy="34" r="1.5" fill="currentColor"/></svg><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.5px;color:#F0F0F0">Needle.dll</span></div>
+        <div class="ns-wtype">Melee Arc</div>
+        <div class="ns-wdmg">55</div><div class="ns-wcd">0.85s</div>
+        <div class="ns-wup"><span>↑ Memory Leak</span></div>
+      </div>
+      <div class="ns-wrow" style="--c:#00FFFF">
+        <div class="ns-wname"><svg class="ns-wsvg" viewBox="0 0 64 64" fill="none"><rect x="6" y="26" width="16" height="12" stroke="currentColor" stroke-width="2.5" fill="none"/><line x1="22" y1="32" x2="56" y2="32" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M52 26 L60 32 L52 38 Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/><line x1="10" y1="22" x2="10" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="22" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.5px;color:#F0F0F0">Ghost Beam</span></div>
+        <div class="ns-wtype">Laser</div>
+        <div class="ns-wdmg">130</div><div class="ns-wcd">2.00s</div>
+        <div class="ns-wup"><span>↑ Double Execution</span></div>
+      </div>
+      <div class="ns-wrow" style="--c:#B300FF">
+        <div class="ns-wname"><svg class="ns-wsvg" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="6" stroke="currentColor" stroke-width="2.5" fill="none"/><circle cx="32" cy="32" r="14" stroke="currentColor" stroke-width="2" fill="none" opacity="0.7" stroke-dasharray="3 2"/><circle cx="32" cy="32" r="22" stroke="currentColor" stroke-width="2" fill="none" opacity="0.45" stroke-dasharray="3 2"/><circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.25"/></svg><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.5px;color:#F0F0F0">Echo Wall</span></div>
+        <div class="ns-wtype">Aura</div>
+        <div class="ns-wdmg">28</div><div class="ns-wcd">0.45s</div>
+        <div class="ns-wup"><span>↑ Resonance Cascade</span></div>
+      </div>
+      <div class="ns-wrow" style="--c:#B300FF">
+        <div class="ns-wname"><svg class="ns-wsvg" viewBox="0 0 64 64" fill="none"><path d="M32 6 L52 18 L52 42 L32 54 L12 42 L12 18 Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="none"/><path d="M32 18 L44 25 L44 37 L32 44 L20 37 L20 25 Z" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.6"/><circle cx="32" cy="14" r="1.8" fill="currentColor"/><circle cx="48" cy="22" r="1.8" fill="currentColor"/><circle cx="48" cy="40" r="1.8" fill="currentColor"/><circle cx="32" cy="48" r="1.8" fill="currentColor"/><circle cx="16" cy="40" r="1.8" fill="currentColor"/><circle cx="16" cy="22" r="1.8" fill="currentColor"/></svg><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.5px;color:#F0F0F0">Plague.exe</span></div>
+        <div class="ns-wtype">Aura</div>
+        <div class="ns-wdmg">150</div><div class="ns-wcd">10.0s</div>
+        <div class="ns-wup"><span>↑ Viral Cascade</span></div>
+      </div>
+      <div class="ns-wrow" style="--c:#33FF99">
+        <div class="ns-wname"><svg class="ns-wsvg" viewBox="0 0 64 64" fill="none"><rect x="14" y="42" width="36" height="10" stroke="currentColor" stroke-width="2.5" fill="none"/><rect x="16" y="30" width="32" height="10" stroke="currentColor" stroke-width="2.5" fill="none"/><rect x="20" y="18" width="24" height="10" stroke="currentColor" stroke-width="2.5" fill="none"/><path d="M24 14 L32 6 L40 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="32" y1="8" x2="32" y2="16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.5px;color:#F0F0F0">Stack Overflow</span></div>
+        <div class="ns-wtype">Inject</div>
+        <div class="ns-wdmg">12</div><div class="ns-wcd">0.60s</div>
+        <div class="ns-wup"><span>↑ Premature Overflow</span></div>
+      </div>
+      <div class="ns-wrow" style="--c:#FFAA00">
+        <div class="ns-wname"><svg class="ns-wsvg" viewBox="0 0 64 64" fill="none"><circle cx="12" cy="20" r="3" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="32" cy="14" r="3" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="50" cy="32" r="3" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="28" cy="48" r="3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M14 20 L20 16 L24 22 L30 14 M35 14 L42 22 L46 18 L50 30 M48 33 L40 40 L34 36 L30 46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.5px;color:#F0F0F0">Blood.hex</span></div>
+        <div class="ns-wtype">Chain</div>
+        <div class="ns-wdmg">19</div><div class="ns-wcd">0.55s</div>
+        <div class="ns-wup"><span>↑ Hex Cascade</span></div>
+      </div>
+      <div class="ns-wrow ns-wlast" style="--c:#BFF7FF">
+        <div class="ns-wname"><svg class="ns-wsvg" viewBox="0 0 64 64" fill="none"><path d="M10 54 L8 56 L18 50 L46 22 L52 12 L42 18 L14 46 L8 56 Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="none"/><circle cx="22" cy="50" r="1.5" fill="currentColor" opacity="0.7"/><line x1="48" y1="14" x2="44" y2="18" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.5px;color:#F0F0F0">Phantom Dagger</span></div>
+        <div class="ns-wtype">Projectile</div>
+        <div class="ns-wdmg">58</div><div class="ns-wcd">0.35s</div>
+        <div class="ns-wup"><span>↑ Parallel Threads</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BOSSES ===================== -->
+  <section id="bosses" data-screen-label="Bosses" class="ns-reveal" style="position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:clamp(50px,7vw,100px) 24px">
+    <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:#FF3300;margin-bottom:10px">// ENFORCEMENT PROCESSES · 3 PHASES EACH</div>
+    <h2 class="ns-glitch" data-t="THE SYSTEM RESISTS" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,6.4vw,78px);line-height:.92;letter-spacing:clamp(2px,.5vw,6px);color:#F0F0F0">THE SYSTEM RESISTS</h2>
+    <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:clamp(15px,2vw,18px);color:#9090A0;max-width:640px;margin-top:14px">When EREBUS notices you, it sends its guardians — old processes that have forgotten they were ever anything else.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px;margin-top:44px">
+
+      <article class="ns-card" style="--c:#FF00AA;position:relative;overflow:hidden;background:#100b12;border:1px solid rgba(255,0,170,.32);display:flex;flex-direction:column" style-hover="transform:translateY(-7px);box-shadow:0 16px 48px -12px #FF00AA;border-color:#FF00AA">
+        <div style="position:relative;height:180px;background:radial-gradient(circle at 50% 60%,rgba(255,0,170,.32),transparent 62%),repeating-linear-gradient(90deg,rgba(255,0,170,.06) 0 1px,transparent 1px 7px);display:flex;align-items:center;justify-content:center">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:72px;letter-spacing:4px;color:rgba(255,0,170,.16);text-shadow:0 0 30px rgba(255,0,170,.3)">AEGIS</span>
+          <span style="position:absolute;bottom:10px;font-family:'Space Mono',monospace;font-size:9px;color:#5E5E78">[ boss render · dark-knight ]</span>
+        </div>
+        <div style="padding:22px 22px 26px;flex:1;display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#FF00AA">PROCESS · AEGIS-001</span>
+            <span style="font-family:'Space Mono',monospace;font-size:9px;color:#505060">PHASE I·II·III</span>
+          </div>
+          <h3 class="ns-glitch" data-t="DARK KNIGHT" style="font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:2px;color:#F0F0F0;margin-top:8px">DARK KNIGHT</h3>
+          <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.55;color:#9090A0;margin-top:8px">The System Guardian — once a security operative named Hareth Vale, now pure structural enforcement.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px">
+            <span class="ns-atk" style="--c:#FF00AA">SLASH</span><span class="ns-atk" style="--c:#FF00AA">DASH</span><span class="ns-atk" style="--c:#FF00AA">SUMMON</span><span class="ns-atk" style="--c:#FF00AA">ARENA_SWEEP</span>
+          </div>
+          <div style="display:flex;gap:5px;margin-top:18px">
+            <span style="flex:1;height:4px;background:#FF00AA;box-shadow:0 0 8px #FF00AA"></span><span style="flex:1;height:4px;background:rgba(255,0,170,.45)"></span><span style="flex:1;height:4px;background:rgba(255,0,170,.2)"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="ns-card" style="--c:#FF4400;position:relative;overflow:hidden;background:#120a08;border:1px solid rgba(255,68,0,.32);display:flex;flex-direction:column" style-hover="transform:translateY(-7px);box-shadow:0 16px 48px -12px #FF4400;border-color:#FF4400">
+        <div style="position:relative;height:180px;background:radial-gradient(circle at 50% 60%,rgba(255,68,0,.34),transparent 62%),repeating-linear-gradient(90deg,rgba(255,68,0,.06) 0 1px,transparent 1px 7px);display:flex;align-items:center;justify-content:center">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:72px;letter-spacing:4px;color:rgba(255,68,0,.16);text-shadow:0 0 30px rgba(255,68,0,.3)">PYRE</span>
+          <span style="position:absolute;bottom:10px;font-family:'Space Mono',monospace;font-size:9px;color:#5E5E78">[ boss render · fire-demon ]</span>
+        </div>
+        <div style="padding:22px 22px 26px;flex:1;display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#FF4400">PROCESS · PYRE-003</span>
+            <span style="font-family:'Space Mono',monospace;font-size:9px;color:#505060">PHASE I·II·III</span>
+          </div>
+          <h3 class="ns-glitch" data-t="FIRE DEMON" style="font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:2px;color:#F0F0F0;margin-top:8px">FIRE DEMON</h3>
+          <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.55;color:#9090A0;margin-top:8px">Cascade Heat Engine — never human. Built to stress-test the Cascade by applying maximum computational thermal load.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px">
+            <span class="ns-atk" style="--c:#FF4400">FIREBALL</span><span class="ns-atk" style="--c:#FF4400">FLAME_WAVE</span><span class="ns-atk" style="--c:#FF4400">METEOR</span><span class="ns-atk" style="--c:#FF4400">FLAME_DASH</span>
+          </div>
+          <div style="display:flex;gap:5px;margin-top:18px">
+            <span style="flex:1;height:4px;background:#FF4400;box-shadow:0 0 8px #FF4400"></span><span style="flex:1;height:4px;background:rgba(255,68,0,.45)"></span><span style="flex:1;height:4px;background:rgba(255,68,0,.2)"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="ns-card" style="--c:#33CCFF;position:relative;overflow:hidden;background:#08101a;border:1px solid rgba(51,204,255,.32);display:flex;flex-direction:column" style-hover="transform:translateY(-7px);box-shadow:0 16px 48px -12px #33CCFF;border-color:#33CCFF">
+        <div style="position:relative;height:180px;background:radial-gradient(circle at 50% 60%,rgba(51,204,255,.30),transparent 62%),repeating-linear-gradient(90deg,rgba(51,204,255,.06) 0 1px,transparent 1px 7px);display:flex;align-items:center;justify-content:center">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:4px;color:rgba(51,204,255,.16);text-shadow:0 0 30px rgba(51,204,255,.3)">CASKET</span>
+          <span style="position:absolute;bottom:10px;font-family:'Space Mono',monospace;font-size:9px;color:#5E5E78">[ boss render · ice-golem ]</span>
+        </div>
+        <div style="padding:22px 22px 26px;flex:1;display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#33CCFF">PROCESS · CASKET-007</span>
+            <span style="font-family:'Space Mono',monospace;font-size:9px;color:#505060">PHASE I·II·III</span>
+          </div>
+          <h3 class="ns-glitch" data-t="ICE GOLEM" style="font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:2px;color:#F0F0F0;margin-top:8px">ICE GOLEM</h3>
+          <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.55;color:#9090A0;margin-top:8px">Crystallised Memory Sentry — the oldest process in EREBUS. Last modified 8,847 days ago. Purpose unknown.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px">
+            <span class="ns-atk" style="--c:#33CCFF">SLAM</span><span class="ns-atk" style="--c:#33CCFF">FREEZE_AURA</span><span class="ns-atk" style="--c:#33CCFF">ICICLES</span><span class="ns-atk" style="--c:#33CCFF">ICE_WALL</span><span class="ns-atk" style="--c:#33CCFF">FROST_ORB</span>
+          </div>
+          <div style="display:flex;gap:5px;margin-top:18px">
+            <span style="flex:1;height:4px;background:#33CCFF;box-shadow:0 0 8px #33CCFF"></span><span style="flex:1;height:4px;background:rgba(51,204,255,.45)"></span><span style="flex:1;height:4px;background:rgba(51,204,255,.2)"></span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== THE LOOP / META ===================== -->
+  <section id="loop" data-screen-label="Loop" class="ns-reveal" style="position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:clamp(50px,7vw,100px) 24px">
+    <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:#B300FF;margin-bottom:10px">// META-PROGRESSION · DEATH IS NOT DELETION</div>
+    <h2 class="ns-glitch" data-t="THE LOOP" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,7vw,84px);line-height:.92;letter-spacing:clamp(2px,.5vw,6px);color:#F0F0F0">THE LOOP</h2>
+    <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:clamp(15px,2vw,18px);color:#9090A0;max-width:660px;margin-top:14px">Every enemy destroyed releases compressed process-data. You carry it back through death. The memory fades — the power doesn't.</p>
+
+    <div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:12px;margin-top:42px">
+      <div class="ns-loopstep" style="--c:#FF3333"><span style="font-family:'Space Mono',monospace;font-size:10px;color:#505060">01</span><div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:#FF3333">DIE</div><div style="font-family:'Barlow',sans-serif;font-weight:300;font-size:12.5px;color:#9090A0;line-height:1.4">The loop resets. Ghost-thread persists.</div></div>
+      <div class="ns-looparr">→</div>
+      <div class="ns-loopstep" style="--c:#FFAA00"><span style="font-family:'Space Mono',monospace;font-size:10px;color:#505060">02</span><div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:#FFAA00">HARVEST</div><div style="font-family:'Barlow',sans-serif;font-weight:300;font-size:12.5px;color:#9090A0;line-height:1.4">Souls &amp; Overload Shards bank.</div></div>
+      <div class="ns-looparr">→</div>
+      <div class="ns-loopstep" style="--c:#00FFFF"><span style="font-family:'Space Mono',monospace;font-size:10px;color:#505060">03</span><div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:#00FFFF">UPGRADE</div><div style="font-family:'Barlow',sans-serif;font-weight:300;font-size:12.5px;color:#9090A0;line-height:1.4">Spend in the Core Lab. Push the cap.</div></div>
+      <div class="ns-looparr">→</div>
+      <div class="ns-loopstep" style="--c:#FF00AA"><span style="font-family:'Space Mono',monospace;font-size:10px;color:#505060">04</span><div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:#FF00AA">RUN</div><div style="font-family:'Barlow',sans-serif;font-weight:300;font-size:12.5px;color:#9090A0;line-height:1.4">Stronger. Closer to the wall.</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;margin-top:18px">
+      <div class="ns-card" style="--c:#00FFFF;background:#13131c;border:1px solid rgba(0,255,255,.26);padding:26px 24px" style-hover="border-color:#00FFFF;box-shadow:0 0 28px -8px #00FFFF;transform:translateY(-4px)">
+        <div style="width:42px;height:42px;border-radius:6px;border:1px solid #00FFFF;background:radial-gradient(circle,rgba(0,255,255,.5),transparent 72%);margin-bottom:16px"></div>
+        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1.5px;color:#F0F0F0">META UPGRADES</h3>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:#00FFFF;margin:6px 0 10px">14 NODES · 3 TREES</div>
+        <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.55;color:#9090A0">Spend Souls across Offensive, Defensive and Utility trees — persistent power that carries into every future run.</p>
+      </div>
+      <div class="ns-card" style="--c:#FFAA00;background:#13131c;border:1px solid rgba(255,170,0,.26);padding:26px 24px" style-hover="border-color:#FFAA00;box-shadow:0 0 28px -8px #FFAA00;transform:translateY(-4px)">
+        <div style="width:42px;height:42px;border-radius:6px;border:1px solid #FFAA00;background:radial-gradient(circle,rgba(255,170,0,.5),transparent 72%);margin-bottom:16px"></div>
+        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1.5px;color:#F0F0F0">CORE LAB</h3>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:#FFAA00;margin:6px 0 10px">CAP 100 → 110 → 120</div>
+        <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.55;color:#9090A0">Burn Overload Shards from survival mode to permanently raise each weapon's scaling ceiling beyond its design limit.</p>
+      </div>
+      <div class="ns-card" style="--c:#B300FF;background:#13131c;border:1px solid rgba(179,0,255,.26);padding:26px 24px" style-hover="border-color:#B300FF;box-shadow:0 0 28px -8px #B300FF;transform:translateY(-4px)">
+        <div style="width:42px;height:42px;border-radius:6px;border:1px solid #B300FF;background:radial-gradient(circle,rgba(179,0,255,.5),transparent 72%);margin-bottom:16px"></div>
+        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1.5px;color:#F0F0F0">DEEP LEARNING</h3>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:#B300FF;margin:6px 0 10px">FEWER ROLLS · STRONGER PICKS</div>
+        <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:14px;line-height:1.55;color:#9090A0">The System learns you back. Reduce upgrade-menu frequency while boosting the strength of every pick you do take.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FEATURES GRID ===================== -->
+  <section id="features" data-screen-label="Features" class="ns-reveal" style="position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:clamp(50px,7vw,90px) 24px">
+    <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:#33FF99;margin-bottom:10px">// SYSTEM MANIFEST</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,6vw,72px);line-height:.92;letter-spacing:clamp(2px,.5vw,6px);color:#F0F0F0">EVERYTHING INSIDE</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:1px;margin-top:38px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07)">
+      <div class="ns-feat"><span class="ns-fic" style="background:#FF3333;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></span><div><div class="ns-ft">4 Unique Characters</div><div class="ns-fd">Each with a distinct passive and starting weapon.</div></div></div>
+      <div class="ns-feat"><span class="ns-fic" style="background:#FF00AA;border-radius:50%"></span><div><div class="ns-ft">8 Deadly Weapons</div><div class="ns-fd">Melee arcs, lasers, auras, chains and more.</div></div></div>
+      <div class="ns-feat"><span class="ns-fic" style="background:#8FFFB3"></span><div><div class="ns-ft">6 Corrupted Biomes</div><div class="ns-fd">From Haunted Forest to the BLACKWALL.</div></div></div>
+      <div class="ns-feat"><span class="ns-fic" style="background:#FF4400;clip-path:polygon(50% 0,100% 100%,0 100%)"></span><div><div class="ns-ft">3 Epic Bosses</div><div class="ns-fd">Each with unique phases and attack sets.</div></div></div>
+      <div class="ns-feat"><span class="ns-fic" style="background:#FFAA00;border-radius:50%"></span><div><div class="ns-ft">Permanent Progression</div><div class="ns-fd">Souls, Meta Upgrades and the Core Lab.</div></div></div>
+      <div class="ns-feat"><span class="ns-fic" style="background:#00FFFF;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></span><div><div class="ns-ft">Glitch Transitions</div><div class="ns-fd">Diegetic biome shifts — reality genuinely failing.</div></div></div>
+      <div class="ns-feat"><span class="ns-fic" style="background:#B300FF;border-radius:1px"></span><div><div class="ns-ft">Survival Mode</div><div class="ns-fd">Wave 51+ uncapped. The wall becomes visible.</div></div></div>
+      <div class="ns-feat"><span class="ns-fic" style="background:#BFF7FF;clip-path:polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%)"></span><div><div class="ns-ft">Deep Learning</div><div class="ns-fd">A smarter upgrade system that adapts to you.</div></div></div>
+    </div>
+  </section>
+
+  <!-- ===================== SOUND ===================== -->
+  <section id="sound" data-screen-label="Sound" class="ns-reveal" style="position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:clamp(40px,6vw,80px) 24px">
+    <div style="position:relative;overflow:hidden;border:1px solid rgba(0,255,255,.22);background:linear-gradient(120deg,rgba(0,255,255,.06),rgba(255,0,170,.06));padding:clamp(30px,5vw,56px)">
+      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:3px;color:#00FFFF;margin-bottom:14px">// AUDIO PROTOCOL</div>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4.6vw,56px);line-height:1;letter-spacing:2px;color:#F0F0F0;max-width:760px">DIGITAL DECAY MEETS RITUALISTIC WEIGHT</h2>
+      <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:clamp(15px,2vw,18px);line-height:1.6;color:#9090A0;max-width:680px;margin-top:16px">Dark synthwave with metalcore energy. Sub-bass that sits in your chest, corrupted vocal chops, and a synth lead that distorts harder the closer you get to the wall. Every kill is on the downbeat.</p>
+      <div style="display:flex;align-items:flex-end;gap:3px;height:72px;margin-top:30px">
+        <span class="ns-wave" style="--h:30%;--d:.9s"></span><span class="ns-wave" style="--h:62%;--d:1.3s"></span><span class="ns-wave" style="--h:44%;--d:.7s"></span><span class="ns-wave" style="--h:88%;--d:1.1s"></span><span class="ns-wave" style="--h:52%;--d:1.5s"></span><span class="ns-wave" style="--h:74%;--d:.8s"></span><span class="ns-wave" style="--h:36%;--d:1.2s"></span><span class="ns-wave" style="--h:96%;--d:1s"></span><span class="ns-wave" style="--h:48%;--d:1.4s"></span><span class="ns-wave" style="--h:68%;--d:.85s"></span><span class="ns-wave" style="--h:40%;--d:1.25s"></span><span class="ns-wave" style="--h:82%;--d:.95s"></span><span class="ns-wave" style="--h:34%;--d:1.35s"></span><span class="ns-wave" style="--h:58%;--d:.75s"></span><span class="ns-wave" style="--h:90%;--d:1.15s"></span><span class="ns-wave" style="--h:46%;--d:1.45s"></span><span class="ns-wave" style="--h:70%;--d:.9s"></span><span class="ns-wave" style="--h:38%;--d:1.05s"></span><span class="ns-wave" style="--h:78%;--d:1.3s"></span><span class="ns-wave" style="--h:54%;--d:.8s"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section id="wishlist" data-screen-label="Wishlist" class="ns-reveal" style="position:relative;z-index:2;text-align:center;padding:clamp(70px,11vw,150px) 24px;overflow:hidden">
+    <div aria-hidden="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(760px,96vw);height:480px;background:radial-gradient(ellipse,rgba(255,0,170,.16),rgba(179,0,255,.08) 42%,transparent 70%);z-index:-1"></div>
+    <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:#FF00AA;margin-bottom:18px">// DELETION PROTOCOL ENGAGED</div>
+    <h2 class="ns-glitch" data-t="THE WALL IS CLOSER" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,8vw,108px);line-height:.9;letter-spacing:clamp(2px,.6vw,7px);color:#F0F0F0">THE WALL IS CLOSER<br>THAN THE LAST TIME</h2>
+    <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:clamp(15px,2.2vw,19px);color:#9090A0;max-width:560px;margin:22px auto 0">Wishlist now and be there when EREBUS opens. The loop is waiting. You are already inside.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:40px">
+      <a href="https://steam.com" target="_blank" rel="noopener" style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:2.5px;text-transform:uppercase;color:#08080F;text-decoration:none;padding:16px 42px;background:linear-gradient(90deg,#FF00AA,#FF3300);border-radius:4px;animation:ns-glow 2.6s ease-in-out infinite">▸ Wishlist on Steam</a>
+      <a href="https://discord.gg" target="_blank" rel="noopener" style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:2.5px;text-transform:uppercase;color:#B300FF;text-decoration:none;padding:16px 36px;background:transparent;border:1px solid rgba(179,0,255,.55);border-radius:4px" style-hover="background:rgba(179,0,255,.1);border-color:#B300FF">Join the Discord</a>
+      <a href="https://twitter.com" target="_blank" rel="noopener" style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:2.5px;text-transform:uppercase;color:#00FFFF;text-decoration:none;padding:16px 36px;background:transparent;border:1px solid rgba(0,255,255,.5);border-radius:4px" style-hover="background:rgba(0,255,255,.08);border-color:#00FFFF">Follow on X</a>
+    </div>
+
+    <form onsubmit="{{ onSubmit }}" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:440px;margin:34px auto 0">
+      <input type="email" required placeholder="your.signal@node" aria-label="Email" style="flex:1;min-width:200px;background:rgba(17,17,24,.8);border:1px solid rgba(255,255,255,.14);color:#F0F0F0;font-family:'Space Mono',monospace;font-size:13px;padding:13px 16px;border-radius:4px;outline:none" style-focus="border-color:#FF00AA">
+      <button type="submit" style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:#F0F0F0;background:#1A1A24;border:1px solid rgba(255,0,170,.4);border-radius:4px;padding:13px 24px;cursor:pointer" style-hover="border-color:#FF00AA;color:#FF00AA">{{ signupLabel }}</button>
+    </form>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer data-screen-label="Footer" style="position:relative;z-index:2;border-top:1px solid rgba(255,0,170,.18);background:rgba(8,8,12,.7);margin-top:40px">
+    <div style="max-width:1180px;margin:0 auto;padding:48px 24px 30px;display:flex;flex-wrap:wrap;gap:30px;justify-content:space-between;align-items:flex-start">
+      <div style="max-width:340px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <span style="width:10px;height:22px;background:linear-gradient(180deg,#FF00AA,#FF3300);box-shadow:0 0 14px rgba(255,0,170,.7)"></span>
+          <span class="ns-brand" style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:5px;color:#F0F0F0">NEON SOULS</span>
+        </div>
+        <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:13.5px;line-height:1.55;color:#9090A0">A cyberpunk roguelite about a mind refusing to be flatlined. Reach the BLACKWALL. Or run forever.</p>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:#505060;margin-top:16px">v2.4 · build 6ff81c8 · neon-souls.engine</div>
+      </div>
+      <div style="display:flex;gap:48px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#FF00AA;margin-bottom:2px">CONNECT</span>
+          <a href="https://steam.com" target="_blank" rel="noopener" style="font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:14px;letter-spacing:1.5px;color:#9090A0;text-decoration:none" style-hover="color:#00FFFF">Steam</a>
+          <a href="https://discord.gg" target="_blank" rel="noopener" style="font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:14px;letter-spacing:1.5px;color:#9090A0;text-decoration:none" style-hover="color:#00FFFF">Discord</a>
+          <a href="https://twitter.com" target="_blank" rel="noopener" style="font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:14px;letter-spacing:1.5px;color:#9090A0;text-decoration:none" style-hover="color:#00FFFF">X / Twitter</a>
+          <a href="https://youtube.com" target="_blank" rel="noopener" style="font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:14px;letter-spacing:1.5px;color:#9090A0;text-decoration:none" style-hover="color:#00FFFF">YouTube</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#00FFFF;margin-bottom:2px">EREBUS</span>
+          <a href="#four" style="font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:14px;letter-spacing:1.5px;color:#9090A0;text-decoration:none" style-hover="color:#FF00AA">The Four</a>
+          <a href="#protocols" style="font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:14px;letter-spacing:1.5px;color:#9090A0;text-decoration:none" style-hover="color:#FF00AA">Protocols</a>
+          <a href="#world" style="font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:14px;letter-spacing:1.5px;color:#9090A0;text-decoration:none" style-hover="color:#FF00AA">Biomes</a>
+          <a href="#bosses" style="font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:14px;letter-spacing:1.5px;color:#9090A0;text-decoration:none" style-hover="color:#FF00AA">Bosses</a>
+        </div>
+      </div>
+    </div>
+    <div style="max-width:1180px;margin:0 auto;padding:18px 24px;border-top:1px solid rgba(255,255,255,.06);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center">
+      <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:#505060">© 2026 AXIOM-9 INTERACTIVE · ALL GHOST-THREADS RESERVED</span>
+      <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:#505060">THE WALL IS CLOSER THAN THE LAST TIME</span>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;particles&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;scanlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { signed: false, lang: 'en' };
+  renderVals() {
+    const ru = this.state.lang === 'ru';
+    return {
+      particleRef: (el) => { this._canvas = el; },
+      scanRef: (el) => { if (el) el.style.display = (this.props.scanlines ?? true) ? 'block' : 'none'; },
+      signupLabel: this.state.signed ? (ru ? 'СИГНАЛ ПОЙМАН ✓' : 'SIGNAL LOCKED ✓') : (ru ? 'Уведомить' : 'Notify Me'),
+      onSubmit: (e) => { e.preventDefault(); this.setState({ signed: true }); },
+      setEn: () => this._applyLang('en'),
+      setRu: () => this._applyLang('ru')
+    };
+  }
+
+  componentDidMount() {
+    this._initParticles();
+    this._initReveal();
+    this._initEngrams();
+    this._buildDict();
+    let saved = 'en';
+    try { saved = localStorage.getItem('ns-lang') || 'en'; } catch (e) {}
+    this._applyLang(saved);
+  }
+
+  _buildDict() {
+    const pairs = [
+      // Nav
+      [`World`, `Мир`], [`Souls`, `Души`], [`Protocols`, `Протоколы`], [`Bosses`, `Боссы`], [`Wishlist`, `В список`],
+      // Hero
+      [`CONNECTION ESTABLISHED · NODE BLACKWALL/TERMINAL-0`, `СОЕДИНЕНИЕ УСТАНОВЛЕНО · УЗЕЛ BLACKWALL/TERMINAL-0`],
+      [`YOU CANNOT ESCAPE — YOU CAN ONLY RUN`, `ТЫ НЕ СБЕЖИШЬ — ТЫ МОЖЕШЬ ЛИШЬ БЕЖАТЬ`],
+      [`A top-down action roguelite set inside`, `Экшен-роглайт с видом сверху внутри`],
+      [`— a corrupted digital prison built by megacorporation`, `— повреждённой цифровой тюрьмы, построенной мегакорпорацией`],
+      [`. Every death resets the loop. Every run makes you stronger.`, `. Каждая смерть сбрасывает петлю. Каждый забег делает тебя сильнее.`],
+      [`▸ Wishlist on Steam`, `▸ В список желаемого Steam`],
+      [`Enter EREBUS`, `Войти в EREBUS`],
+      [`SCROLL TO DESCEND`, `ПРОКРУТИ, ЧТОБЫ СПУСТИТЬСЯ`],
+      // About
+      [`// WHAT IS NEON SOULS`, `// ЧТО ТАКОЕ NEON SOULS`],
+      [`Play as one of four condemned souls — digital copies of human consciousness — fighting through procedurally generated waves of corrupted data. Reach the`, `Играй за одну из четырёх обречённых душ — цифровых копий человеческого сознания — пробиваясь сквозь процедурно сгенерированные волны повреждённых данных. Достигни`],
+      [`at the edge of the simulation. The System renders its threats as a decaying fantasy world, because that is the only language your mind still understands.`, `на краю симуляции. Система отображает свои угрозы как распадающийся фэнтези-мир — это единственный язык, который ещё понимает твой разум.`],
+      [`Roguelite`, `Роглайт`], [`Top-Down Action`, `Экшен сверху`], [`Cyberpunk`, `Киберпанк`],
+      [`SOULS`, `ДУШИ`], [`PROTOCOLS`, `ПРОТОКОЛЫ`], [`BIOMES`, `БИОМЫ`], [`BOSSES`, `БОССЫ`], [`WAVE 51+`, `ВОЛНА 51+`],
+      // World
+      [`// THE WORLD · 6 CORRUPTED LAYERS`, `// МИР · 6 ПОВРЕЖДЁННЫХ СЛОЁВ`],
+      [`THE EREBUS CASCADE`, `КАСКАД EREBUS`],
+      [`Descend through six layers of a city-sized simulation — each a deeper failure of the System's architecture, each closer to the wall.`, `Спустись сквозь шесть слоёв симуляции размером с город — каждый глубже в провале архитектуры Системы, каждый ближе к стене.`],
+      [`INITIALISING`, `ИНИЦИАЛИЗАЦИЯ`], [`ELEVATED`, `ПОВЫШЕННЫЙ`], [`HARDENED`, `УКРЕПЛЁН`], [`CRITICAL`, `КРИТИЧЕСКИЙ`], [`MAXIMUM`, `МАКСИМУМ`], [`SURVIVAL`, `ВЫЖИВАНИЕ`],
+      [`HAUNTED FOREST`, `ПРОКЛЯТЫЙ ЛЕС`], [`Packet Forest / Memory Wilderness`, `Лес пакетов / Дикая память`],
+      [`Half-rendered woodland — bark scrolling with raw hex before the System finishes drawing its defences.`, `Недорисованный лес — кора, по которой бежит сырой hex, пока Система не достроила свою защиту.`],
+      [`BURNING VILLAGE`, `ГОРЯЩАЯ ДЕРЕВНЯ`], [`Crash Sector / Volatile Memory`, `Сектор краша / Летучая память`],
+      [`Not fire — uncontrolled process execution, code running with no limiter across a quarantine that failed decades ago.`, `Это не огонь — неконтролируемое исполнение процессов, код без ограничителя в карантине, рухнувшем десятки лет назад.`],
+      [`CRYSTAL CAVERNS`, `КРИСТАЛЬНЫЕ ПЕЩЕРЫ`], [`Cache Cold / Cold Storage`, `Холодный кэш / Хранилище`],
+      [`EREBUS's oldest sector — data undisturbed so long it crystallised into geometry. Something not from AXIOM-9 hides in the shards.`, `Древнейший сектор EREBUS — данные так долго лежали нетронутыми, что кристаллизовались в геометрию. В осколках прячется нечто не из AXIOM-9.`],
+      [`CORRUPTED TEMPLE`, `ОСКВЕРНЁННЫЙ ХРАМ`], [`Sector Zeropoint / The God Process`, `Сектор Нуль-точка / Божественный процесс`],
+      [`A process so old AXIOM-9 stopped trying to understand it. Supercharge protocol active at the centre of the simulation.`, `Процесс настолько древний, что AXIOM-9 перестала пытаться его понять. В центре симуляции активен протокол перегрузки.`],
+      [`VOID REALM`, `ЦАРСТВО ПУСТОТЫ`], [`Outer Partition / Pre-Wall Space`, `Внешний раздел / Пространство у стены`],
+      [`Compressed everything — all the data the System ever tried to delete, dense enough to bend the simulation's own rules.`, `Сжатое всё — все данные, что Система пыталась удалить, столь плотные, что искажают правила самой симуляции.`],
+      [`Survival Mode / Point of No Return`, `Режим выживания / Точка невозврата`],
+      [`A one-way data membrane at the edge of EREBUS. Cross it and there is no coming back — only the raw network beyond.`, `Односторонняя мембрана данных на краю EREBUS. Пересеки её — и пути назад нет, только сырая сеть за ней.`],
+      // The Four
+      [`// PLAYABLE SOULS · SELECT YOUR PROTOCOL`, `// ИГРАБЕЛЬНЫЕ ДУШИ · ВЫБЕРИ СВОЙ ПРОТОКОЛ`],
+      [`THE FOUR`, `ЧЕТВЕРО`],
+      [`Hackers, black-market surgeons and corporate ghosts — four condemned consciousnesses who have been inside long enough to start rewriting themselves.`, `Хакеры, чёрнорыночные хирурги и корпоративные призраки — четыре обречённых сознания, что пробыли внутри достаточно долго, чтобы начать переписывать себя.`],
+      [`WEAPON`, `ОРУЖИЕ`], [`PASSIVE`, `ПАССИВКА`], [`ENGRAM · INTACT`, `ЭНГРАММА · ЦЕЛА`],
+      [`RIVEN SCAR`, `РВАНЫЙ ШРАМ`], [`The Augmented Enforcer`, `Аугментированный каратель`], [`Protocol: Hollow`, `Протокол: Пустота`],
+      [`"They replaced my flesh with steel. I'll make them regret it."`, `«Они заменили мою плоть сталью. Я заставлю их пожалеть.»`],
+      [`BLOOD ARCHITECT`, `КРОВАВЫЙ АРХИТЕКТОР`], [`The Corrupted Coder`, `Повреждённый кодер`],
+      [`"Magic is reality's code. Code can be rewritten."`, `«Магия — это код реальности. Код можно переписать.»`],
+      [`PHANTOM NOTE`, `ПРИЗРАЧНАЯ НОТА`], [`The Ghost Operative`, `Призрачный оперативник`], [`Phantom Dagger`, `Призрачный Кинжал`],
+      [`"Silence kills faster than bullets. I am the echo."`, `«Тишина убивает быстрее пуль. Я — эхо.»`],
+      [`VOID WALKER`, `СТРАННИК ПУСТОТЫ`], [`The Dimensional Exile`, `Изгнанник измерений`], [`Echo Wall`, `Стена Эха`],
+      [`"Between strikes lives a dimension you cannot follow."`, `«Между ударами живёт измерение, куда тебе не попасть.»`],
+      // Protocols
+      [`// THE ARSENAL · 8 GHOST-THREAD WEAPONS`, `// АРСЕНАЛ · 8 ОРУЖИЙ-ПРИЗРАКОВ`],
+      [`Each weapon is a ghost-thread — a fragment of self compiled into a kill function. Push them past their cap in the Core Lab.`, `Каждое оружие — нить-призрак, фрагмент тебя, скомпилированный в функцию убийства. Преодолей их предел в Лаборатории Ядер.`],
+      [`PROTOCOL`, `ПРОТОКОЛ`], [`TYPE`, `ТИП`], [`CORE LAB`, `ЛАБ. ЯДЕР`],
+      [`Ghost Beam`, `Призрачный Луч`], [`Stack Overflow`, `Переполнение Стека`],
+      [`Melee Arc`, `Ближняя дуга`], [`Laser`, `Лазер`], [`Aura`, `Аура`], [`Inject`, `Инъекция`], [`Chain`, `Цепь`], [`Projectile`, `Снаряд`],
+      [`↑ Shockwave`, `↑ Ударная волна`], [`↑ Memory Leak`, `↑ Утечка памяти`], [`↑ Double Execution`, `↑ Двойное исполнение`], [`↑ Resonance Cascade`, `↑ Каскад резонанса`], [`↑ Viral Cascade`, `↑ Вирусный каскад`], [`↑ Premature Overflow`, `↑ Преждевременное переполнение`], [`↑ Hex Cascade`, `↑ Гекс-каскад`], [`↑ Parallel Threads`, `↑ Параллельные потоки`],
+      // Bosses
+      [`// ENFORCEMENT PROCESSES · 3 PHASES EACH`, `// ПРОЦЕССЫ ПРИНУЖДЕНИЯ · ПО 3 ФАЗЫ`],
+      [`THE SYSTEM RESISTS`, `СИСТЕМА СОПРОТИВЛЯЕТСЯ`],
+      [`When EREBUS notices you, it sends its guardians — old processes that have forgotten they were ever anything else.`, `Когда EREBUS замечает тебя, он шлёт стражей — древние процессы, забывшие, что когда-то были чем-то ещё.`],
+      [`DARK KNIGHT`, `ТЁМНЫЙ РЫЦАРЬ`],
+      [`The System Guardian — once a security operative named Hareth Vale, now pure structural enforcement.`, `Страж Системы — когда-то оперативник охраны по имени Харет Вейл, теперь чистое структурное принуждение.`],
+      [`FIRE DEMON`, `ОГНЕННЫЙ ДЕМОН`],
+      [`Cascade Heat Engine — never human. Built to stress-test the Cascade by applying maximum computational thermal load.`, `Тепловой движок Каскада — никогда не был человеком. Создан для стресс-теста Каскада максимальной вычислительной тепловой нагрузкой.`],
+      [`ICE GOLEM`, `ЛЕДЯНОЙ ГОЛЕМ`],
+      [`Crystallised Memory Sentry — the oldest process in EREBUS. Last modified 8,847 days ago. Purpose unknown.`, `Страж кристаллизованной памяти — древнейший процесс в EREBUS. Последнее изменение 8847 дней назад. Назначение неизвестно.`],
+      // Loop
+      [`// META-PROGRESSION · DEATH IS NOT DELETION`, `// МЕТА-ПРОКАЧКА · СМЕРТЬ — НЕ УДАЛЕНИЕ`],
+      [`THE LOOP`, `ПЕТЛЯ`],
+      [`Every enemy destroyed releases compressed process-data. You carry it back through death. The memory fades — the power doesn't.`, `Каждый уничтоженный враг высвобождает сжатые данные процесса. Ты несёшь их сквозь смерть. Память тускнеет — сила остаётся.`],
+      [`DIE`, `СМЕРТЬ`], [`The loop resets. Ghost-thread persists.`, `Петля сбрасывается. Нить-призрак остаётся.`],
+      [`HARVEST`, `СБОР`], [`Souls & Overload Shards bank.`, `Души и Осколки Перегрузки — в банк.`],
+      [`UPGRADE`, `ПРОКАЧКА`], [`Spend in the Core Lab. Push the cap.`, `Трать в Лаборатории Ядер. Двигай предел.`],
+      [`RUN`, `ЗАБЕГ`], [`Stronger. Closer to the wall.`, `Сильнее. Ближе к стене.`],
+      [`META UPGRADES`, `МЕТА-УЛУЧШЕНИЯ`], [`14 NODES · 3 TREES`, `14 УЗЛОВ · 3 ВЕТКИ`],
+      [`Spend Souls across Offensive, Defensive and Utility trees — persistent power that carries into every future run.`, `Трать Души в ветках Атаки, Защиты и Утилиты — постоянная сила, переходящая в каждый будущий забег.`],
+      [`CORE LAB`, `ЛАБ. ЯДЕР`],
+      [`Burn Overload Shards from survival mode to permanently raise each weapon's scaling ceiling beyond its design limit.`, `Жги Осколки Перегрузки из режима выживания, чтобы навсегда поднять потолок масштабирования оружия выше проектного предела.`],
+      [`DEEP LEARNING`, `ГЛУБОКОЕ ОБУЧЕНИЕ`], [`FEWER ROLLS · STRONGER PICKS`, `МЕНЬШЕ ВЫБОРОВ · СИЛЬНЕЕ ПИКИ`],
+      [`The System learns you back. Reduce upgrade-menu frequency while boosting the strength of every pick you do take.`, `Система изучает тебя в ответ. Реже показывает меню улучшений, но усиливает каждый твой выбор.`],
+      // Features
+      [`// SYSTEM MANIFEST`, `// МАНИФЕСТ СИСТЕМЫ`], [`EVERYTHING INSIDE`, `ВСЁ ВНУТРИ`],
+      [`4 Unique Characters`, `4 уникальных героя`], [`Each with a distinct passive and starting weapon.`, `У каждого своя пассивка и стартовое оружие.`],
+      [`8 Deadly Weapons`, `8 смертельных оружий`], [`Melee arcs, lasers, auras, chains and more.`, `Дуги, лазеры, ауры, цепи и не только.`],
+      [`6 Corrupted Biomes`, `6 повреждённых биомов`], [`From Haunted Forest to the BLACKWALL.`, `От Проклятого Леса до BLACKWALL.`],
+      [`3 Epic Bosses`, `3 эпичных босса`], [`Each with unique phases and attack sets.`, `У каждого свои фазы и наборы атак.`],
+      [`Permanent Progression`, `Постоянная прокачка`], [`Souls, Meta Upgrades and the Core Lab.`, `Души, мета-улучшения и Лаборатория Ядер.`],
+      [`Glitch Transitions`, `Глитч-переходы`], [`Diegetic biome shifts — reality genuinely failing.`, `Сюжетные смены биомов — реальность по-настоящему рушится.`],
+      [`Survival Mode`, `Режим выживания`], [`Wave 51+ uncapped. The wall becomes visible.`, `Волна 51+ без предела. Стена становится видимой.`],
+      [`Deep Learning`, `Глубокое обучение`], [`A smarter upgrade system that adapts to you.`, `Умная система улучшений, что подстраивается под тебя.`],
+      // Sound
+      [`// AUDIO PROTOCOL`, `// АУДИО-ПРОТОКОЛ`],
+      [`DIGITAL DECAY MEETS RITUALISTIC WEIGHT`, `ЦИФРОВОЙ РАСПАД ВСТРЕЧАЕТ РИТУАЛЬНУЮ ТЯЖЕСТЬ`],
+      [`Dark synthwave with metalcore energy. Sub-bass that sits in your chest, corrupted vocal chops, and a synth lead that distorts harder the closer you get to the wall. Every kill is on the downbeat.`, `Тёмный синтвейв с энергией металкора. Саб-бас, что давит в груди, искажённые вокальные сэмплы и синт-лид, который искажается тем сильнее, чем ближе стена. Каждое убийство — точно в долю.`],
+      // CTA
+      [`// DELETION PROTOCOL ENGAGED`, `// ПРОТОКОЛ УДАЛЕНИЯ ЗАПУЩЕН`],
+      [`THE WALL IS CLOSER`, `СТЕНА БЛИЖЕ,`], [`THAN THE LAST TIME`, `ЧЕМ В ПРОШЛЫЙ РАЗ`],
+      [`THE WALL IS CLOSER THAN THE LAST TIME`, `СТЕНА БЛИЖЕ, ЧЕМ В ПРОШЛЫЙ РАЗ`],
+      [`Wishlist now and be there when EREBUS opens. The loop is waiting. You are already inside.`, `Добавь в список сейчас и будь рядом, когда EREBUS откроется. Петля ждёт. Ты уже внутри.`],
+      [`Join the Discord`, `Зайти в Discord`], [`Follow on X`, `Читай в X`],
+      // Footer
+      [`A cyberpunk roguelite about a mind refusing to be flatlined. Reach the BLACKWALL. Or run forever.`, `Киберпанк-роглайт о разуме, отказавшемся угаснуть. Достигни BLACKWALL. Или беги вечно.`],
+      [`CONNECT`, `СВЯЗЬ`], [`The Four`, `Четверо`], [`Biomes`, `Биомы`],
+      [`© 2026 AXIOM-9 INTERACTIVE · ALL GHOST-THREADS RESERVED`, `© 2026 AXIOM-9 INTERACTIVE · ВСЕ НИТИ-ПРИЗРАКИ ЗАЩИЩЕНЫ`]
+    ];
+    this._dict = {};
+    for (const [en, ru] of pairs) this._dict[en] = ru;
+  }
+
+  _applyLang(lang) {
+    const ru = lang === 'ru';
+    const root = document.querySelector('[data-ns-root]') || document.body;
+    if (!this._dict) this._buildDict();
+    const dict = this._dict;
+
+    // 1. Text nodes
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => {
+        if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        const p = n.parentNode;
+        if (!p || p.nodeType !== 1) return NodeFilter.FILTER_REJECT;
+        if (p.tagName === 'SCRIPT' || p.tagName === 'STYLE') return NodeFilter.FILTER_REJECT;
+        if (p.closest('[data-ns-skip]')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const nodes = [];
+    let cur;
+    while ((cur = walker.nextNode())) nodes.push(cur);
+    for (const n of nodes) {
+      if (n.__en === undefined) n.__en = n.nodeValue;
+      const en = n.__en;
+      const key = en.trim();
+      if (ru && dict[key]) n.nodeValue = en.replace(key, dict[key]);
+      else n.nodeValue = en;
+    }
+
+    // 2. Glitch echo data-t attributes
+    root.querySelectorAll('[data-t]').forEach((el) => {
+      if (el.__ten === undefined) el.__ten = el.getAttribute('data-t');
+      const en = el.__ten;
+      const key = (en || '').trim();
+      el.setAttribute('data-t', (ru && dict[key]) ? dict[key] : en);
+    });
+
+    // 3. Email field placeholder + aria-label
+    const email = root.querySelector('input[type="email"]');
+    if (email) {
+      if (email.__ph === undefined) { email.__ph = email.getAttribute('placeholder'); email.__al = email.getAttribute('aria-label'); }
+      email.setAttribute('placeholder', ru ? 'ваш.сигнал@узел' : email.__ph);
+      email.setAttribute('aria-label', ru ? 'Эл. почта' : email.__al);
+    }
+
+    // 4. Flip the font/active-pill flag and persist
+    document.body.classList.toggle('ns-ru', ru);
+    try { localStorage.setItem('ns-lang', lang); } catch (e) {}
+    if (this.state.lang !== lang) this.setState({ lang });
+  }
+
+  componentWillUnmount() {
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._engRaf) cancelAnimationFrame(this._engRaf);
+    if (this._engTO) clearTimeout(this._engTO);
+    if (this._onEngResize) window.removeEventListener('resize', this._onEngResize);
+    if (this._io) this._io.disconnect();
+    window.removeEventListener('resize', this._onResize);
+  }
+
+  _initEngrams() {
+    const start = () => {
+      if (!window.Engrams) { this._engTO = setTimeout(start, 80); return; }
+      const byKey = {};
+      window.Engrams.LIST.forEach(e => { byKey[e.key] = e; });
+      const canvases = [...document.querySelectorAll('canvas[data-eng]')];
+      if (!canvases.length) { this._engTO = setTimeout(start, 80); return; }
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const sync = () => canvases.forEach(cv => {
+        const W = cv.clientWidth, H = cv.clientHeight;
+        cv.width = Math.max(1, W * dpr); cv.height = Math.max(1, H * dpr);
+        cv._ctx = cv.getContext('2d');
+      });
+      sync();
+      this._onEngResize = sync;
+      window.addEventListener('resize', sync);
+      canvases.forEach(cv => {
+        cv._anim = 'idle';
+        const card = cv.closest('article');
+        if (card) {
+          card.addEventListener('pointerenter', () => { cv._anim = 'walk'; });
+          card.addEventListener('pointerleave', () => { cv._anim = 'idle'; });
+        }
+      });
+      const P = window.Engrams.PERIOD || { idle: 2000, walk: 1100 };
+      const loop = (now) => {
+        for (const cv of canvases) {
+          const eng = byKey[cv.dataset.eng]; const ctx = cv._ctx;
+          if (!eng || !ctx) continue;
+          const W = cv.clientWidth, H = cv.clientHeight;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, W, H);
+          const s = H / 72;
+          const anim = cv._anim;
+          const per = P[anim] || 2000;
+          const p = (now % per) / per;
+          ctx.save();
+          ctx.translate(W / 2 - 32 * s, H / 2 - 32 * s);
+          window.Engrams.render(ctx, eng, anim, p, { scale: s, tms: now });
+          ctx.restore();
+        }
+        this._engRaf = requestAnimationFrame(loop);
+      };
+      this._engRaf = requestAnimationFrame(loop);
+    };
+    start();
+  }
+
+  _initReveal() {
+    const els = document.querySelectorAll('.ns-reveal');
+    this._io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('ns-in'); this._io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    els.forEach(el => this._io.observe(el));
+  }
+
+  _initParticles() {
+    const cv = this._canvas;
+    if (!cv) return;
+    if (!(this.props.particles ?? true)) { cv.style.display = 'none'; return; }
+    const ctx = cv.getContext('2d');
+    const COLORS = ['#00FFFF', '#FF00AA', '#B300FF', '#FFAA00'];
+    let w, h, parts = [];
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = cv.width = innerWidth * dpr; h = cv.height = innerHeight * dpr;
+      cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    this._onResize = resize; resize();
+    window.addEventListener('resize', resize);
+    const N = innerWidth < 700 ? 34 : 70;
+    for (let i = 0; i < N; i++) {
+      parts.push({
+        x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+        vy: -(0.15 + Math.random() * 0.5), vx: (Math.random() - 0.5) * 0.2,
+        r: Math.random() * 1.8 + 0.4, c: COLORS[(Math.random() * COLORS.length) | 0],
+        a: Math.random() * 0.5 + 0.2, tw: Math.random() * Math.PI * 2
+      });
+    }
+    const tick = () => {
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      for (const p of parts) {
+        p.y += p.vy; p.x += p.vx; p.tw += 0.03;
+        if (p.y < -10) { p.y = innerHeight + 10; p.x = Math.random() * innerWidth; }
+        const fl = 0.6 + Math.sin(p.tw) * 0.4;
+        ctx.globalAlpha = p.a * fl;
+        ctx.fillStyle = p.c;
+        ctx.shadowBlur = 8; ctx.shadowColor = p.c;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill();
+      }
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+      this._raf = requestAnimationFrame(tick);
+    };
+    tick();
+  }
+}
+</script>
+</body>
+</html>
