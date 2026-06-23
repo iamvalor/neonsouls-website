@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Neon Souls — Boss Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0A0A0F; color: #EDEDFF; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+  h1 { color: #FF00AA; margin-bottom: 5px; letter-spacing: 4px; font-size: 20px; }
+  .subtitle { color: #5E5E78; font-size: 11px; margin-bottom: 30px; letter-spacing: 2px; }
+  .boss-row { display: flex; gap: 40px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+  .boss-card { display: flex; flex-direction: column; align-items: center; }
+  .boss-name { color: #00FFFF; font-size: 14px; font-weight: bold; letter-spacing: 3px; margin-top: 10px; }
+  .boss-role { color: #5E5E78; font-size: 9px; letter-spacing: 2px; margin-top: 3px; }
+  canvas { border: 1px solid #1a1a2e; background: #0A0A0F; }
+  .controls { margin-top: 20px; display: flex; gap: 15px; align-items: center; }
+  .controls label { color: #8A8AA8; font-size: 11px; }
+  .controls input[type=range] { width: 120px; accent-color: #FF00AA; }
+  .controls button { background: #1a1a2e; color: #00FFFF; border: 1px solid #00FFFF44; padding: 6px 16px; cursor: pointer; font-family: inherit; font-size: 11px; letter-spacing: 1px; }
+  .controls button:hover { background: #00FFFF11; }
+  .controls button.active { background: #00FFFF22; border-color: #00FFFF; }
+  .size-label { color: #5E5E78; font-size: 9px; margin-top: 4px; }
+  .info { color: #5E5E78; font-size: 9px; margin-top: 20px; letter-spacing: 1px; max-width: 600px; text-align: center; line-height: 1.6; }
+</style>
+</head>
+<body>
+<h1>BOSS PREVIEW</h1>
+<div class="subtitle">PROCEDURAL RENDERING · AEGIS-001 · PYRE-003 · CASKET-007</div>
+
+<div class="boss-row">
+  <div class="boss-card">
+    <canvas id="aegis" width="300" height="300"></canvas>
+    <div class="boss-name">AEGIS-001</div>
+    <div class="boss-role">SECURITY PROCESS</div>
+    <div class="size-label" id="aegis-size"></div>
+  </div>
+  <div class="boss-card">
+    <canvas id="pyre" width="300" height="300"></canvas>
+    <div class="boss-name">PYRE-003</div>
+    <div class="boss-role">INCINERATION PROCESS</div>
+    <div class="size-label" id="pyre-size"></div>
+  </div>
+  <div class="boss-card">
+    <canvas id="casket" width="300" height="300"></canvas>
+    <div class="boss-name">CASKET-007</div>
+    <div class="boss-role">CONTAINMENT PROCESS</div>
+    <div class="size-label" id="casket-size"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <label>Boss Radius:</label>
+  <input type="range" id="radiusSlider" min="10" max="80" value="35">
+  <label>Time Speed:</label>
+  <input type="range" id="speedSlider" min="1" max="10" value="3">
+  <button id="btnIdle" class="active" onclick="setAnim('idle')">IDLE</button>
+  <button id="btnAttack" onclick="setAnim('attack')">ATTACK</button>
+  <button id="btnHit" onclick="setAnim('hit')">HIT</button>
+</div>
+
+<div class="info">
+  Reproduces the procedural rendering from GameScreen.kt at 3× scale.<br>
+  Colors and shapes match the updated AEGIS/PYRE/CASKET redesign.
+</div>
+
+<script>
+let t = 0;
+let anim = 'idle';
+let animTimer = 0;
+let bossRadius = 35;
+
+const aegisCanvas = document.getElementById('aegis');
+const pyreCanvas = document.getElementById('pyre');
+const casketCanvas = document.getElementById('casket');
+const aegisCtx = aegisCanvas.getContext('2d');
+const pyreCtx = pyreCanvas.getContext('2d');
+const casketCtx = casketCanvas.getContext('2d');
+
+function setAnim(a) {
+  anim = a;
+  animTimer = 0;
+  document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn' + a.charAt(0).toUpperCase() + a.slice(1)).classList.add('active');
+}
+
+function drawAegis(ctx, t, r, anim) {
+  const C = 150;
+  const size = r * 3.0;
+  const dashComp = anim === 'attack' ? Math.min(1, animTimer * 2) : 0;
+  const compScale = 1 - 0.18 * dashComp;
+  const glitch = Math.sin(t * 14) > 0.88 ? (Math.random() * 7 - 3) : 0;
+
+  // Glow
+  const glowAlpha = 0.30 + 0.12 * Math.sin(t * 2) + 0.15 * dashComp;
+  ctx.beginPath();
+  ctx.arc(C + glitch, C, size + 18, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(136, 68, 202, ${glowAlpha * 0.4})`;
+  ctx.fill();
+
+  // Star
+  const spikes = 5;
+  const outerR = size * compScale;
+  const innerR = size * 0.35 * compScale;
+  ctx.beginPath();
+  for (let i = 0; i < spikes * 2; i++) {
+    const angle = i * (Math.PI / spikes) - Math.PI / 2;
+    const r2 = i % 2 === 0 ? outerR : innerR;
+    const x = C + Math.cos(angle) * r2 + glitch;
+    const y = C + Math.sin(angle) * r2;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#0D0D1A';
+  ctx.fill();
+  ctx.strokeStyle = '#AA55EE';
+  ctx.lineWidth = 3 + 2 * dashComp;
+  ctx.stroke();
+
+  // Eye
+  const eyePulse = dashComp > 0.5 ? 1 : 0.6 + 0.4 * Math.sin(t * 12);
+  ctx.beginPath();
+  ctx.arc(C + glitch, C, size * 0.18, 0, Math.PI * 2);
+  ctx.fillStyle = dashComp > 0 ? '#FF0000' : '#DD0000';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(C + glitch, C, size * 0.25, 0, Math.PI * 2);
+  ctx.strokeStyle = `rgba(255, 136, 136, ${eyePulse})`;
+  ctx.lineWidth = 2.5 + 2 * dashComp;
+  ctx.stroke();
+
+  // Data fragments
+  for (let i = 0; i < 6; i++) {
+    const angle = t * 1.5 + i * (Math.PI * 2 / 6);
+    const shardR = r + 30;
+    const sx = C + Math.cos(angle) * shardR + glitch;
+    const sy = C + Math.sin(angle) * shardR * 0.75;
+    const fSize = 4 + (i % 2) * 2;
+    ctx.fillStyle = '#1A1A2E';
+    ctx.fillRect(sx - fSize/2, sy - fSize/2, fSize, fSize);
+    const a = 0.5 + 0.3 * Math.sin(t * 3 + i);
+    ctx.strokeStyle = `rgba(0, 255, 255, ${a})`;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(sx - fSize/2, sy - fSize/2, fSize, fSize);
+  }
+
+  // Text orbit
+  const words = ['SUDO', 'ROOT', 'D.ENIED', '0-DEAD', '--rm'];
+  ctx.font = '9px Courier New';
+  words.forEach((word, i) => {
+    const angle = t * 1.2 + i * (Math.PI * 2 / words.size);
+    const orbitR = r + 40;
+    const wx = C + Math.cos(angle) * orbitR;
+    const wy = C + Math.sin(angle) * orbitR * 0.6;
+    const bright = Math.floor(100 + 155 * (0.5 + 0.5 * Math.sin(t * 4 + i)));
+    ctx.fillStyle = `rgba(170, 85, 238, 0.6)`;
+    ctx.fillText(word, wx - 15, wy);
+  });
+}
+
+function drawPyre(ctx, t, r, anim) {
+  const C = 150;
+  const size = r * 3.0;
+  const flare = anim === 'attack' ? Math.min(6, animTimer * 8) : 0;
+  const sX = Math.sin(t * 17) > 0.8 ? (Math.random() * 7 - 3) : 0;
+  const sY = Math.sin(t * 17 + 2) > 0.8 ? (Math.random() * 5 - 2) : 0;
+
+  // Glow
+  const glowAlpha = 0.35 + 0.15 * Math.sin(t * 3);
+  ctx.beginPath();
+  ctx.arc(C + sX, C + sY, size + 22, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(255, 68, 0, ${glowAlpha * 0.4})`;
+  ctx.fill();
+
+  // Star
+  const spikes = 7;
+  const outerR = size;
+  const innerR = size * 0.35;
+  ctx.beginPath();
+  for (let i = 0; i < spikes * 2; i++) {
+    const angle = i * (Math.PI / spikes) - Math.PI / 2;
+    const r2 = i % 2 === 0 ? outerR : innerR;
+    const x = C + Math.cos(angle) * r2 + sX;
+    const y = C + Math.sin(angle) * r2 + sY;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#220800';
+  ctx.fill();
+  ctx.strokeStyle = '#FF3300';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // Core
+  const corePulse = 0.5 + 0.5 * Math.sin(t * 5.8);
+  ctx.beginPath();
+  ctx.arc(C + sX, C + sY, size * 0.35, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255, 204, 0, 0.45)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(C + sX, C + sY, size * 0.20, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(255, 102, 0, ${corePulse})`;
+  ctx.fill();
+
+  // Embers
+  for (let i = 0; i < 8; i++) {
+    const ey = C + 14 - ((t * 60 + i * 7) % 72);
+    const ex = C + Math.sin(i * 2 + t * 0.3) * 12;
+    ctx.fillStyle = i % 2 === 0 ? '#FFC400' : '#FF7A00';
+    ctx.fillRect(ex - 1, ey - 1, 2, 2);
+  }
+
+  // Text
+  const words = ['EXEC', 'CORRUPT', '!!!', 'VIRUS', '0xFF', 'KILL'];
+  ctx.font = '8px Courier New';
+  words.forEach((word, i) => {
+    const angle = t * 2.2 + i * (Math.PI * 2 / words.size);
+    const orbitR = r + 30;
+    const wx = C + Math.cos(angle) * orbitR;
+    const wy = C + Math.sin(angle) * orbitR * 0.6;
+    const bright = Math.floor(100 + 155 * (0.5 + 0.5 * Math.sin(t * 4 + i)));
+    ctx.fillStyle = `rgba(255, ${bright}, 0, 0.7)`;
+    ctx.fillText(word, wx - 15, wy);
+  });
+}
+
+function drawCasket(ctx, t, r, anim) {
+  const C = 150;
+  const size = r * 3.0;
+  const crack = anim === 'hit' ? Math.max(0, 1 - animTimer * 2) : 0;
+
+  // Glow
+  const glowAlpha = 0.25 + 0.12 * Math.sin(t * 1.5);
+  ctx.beginPath();
+  ctx.arc(C, C, size + 20, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(0, 170, 255, ${glowAlpha * 0.4})`;
+  ctx.fill();
+
+  // Diamond
+  const dW = size * 1.2;
+  const dH = size * 1.6;
+  ctx.beginPath();
+  ctx.moveTo(C, C - dH/2);
+  ctx.lineTo(C + dW/2, C);
+  ctx.lineTo(C, C + dH/2);
+  ctx.lineTo(C - dW/2, C);
+  ctx.closePath();
+  ctx.fillStyle = '#001020';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(136, 204, 255, 0.9)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // Inner facet
+  const iW = dW * 0.58;
+  const iH = dH * 0.62;
+  ctx.beginPath();
+  ctx.moveTo(C, C - iH/2);
+  ctx.lineTo(C + iW/2, C);
+  ctx.lineTo(C, C + iH/2);
+  ctx.lineTo(C - iW/2, C);
+  ctx.closePath();
+  ctx.strokeStyle = 'rgba(85, 153, 221, 0.4)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Eye
+  ctx.beginPath();
+  ctx.arc(C, C, size * 0.16, 0, Math.PI * 2);
+  ctx.fillStyle = '#AAEEFF';
+  ctx.fill();
+  const eyePulse = 0.7 + 0.3 * Math.sin(t * 8);
+  ctx.beginPath();
+  ctx.arc(C, C, size * 0.22, 0, Math.PI * 2);
+  ctx.strokeStyle = `rgba(204, 255, 255, ${eyePulse})`;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Particles
+  const pCols = ['#FF44CC', '#00FF88', '#00FFFF'];
+  for (let i = 0; i < 16; i++) {
+    const seed = i * 2.7;
+    const angle = seed + t * (0.4 + (i % 3) * 0.2);
+    const dist = r * 0.9 + (i % 4) * 8;
+    const px = C + Math.cos(angle) * dist;
+    const py = C + Math.sin(angle) * dist * 0.8;
+    const a = 0.7 + 0.3 * Math.sin(t * 3 + seed);
+    ctx.fillStyle = pCols[i % 3];
+    ctx.globalAlpha = a;
+    ctx.fillRect(px - 1.5, py - 1.5, 3, 3);
+  }
+  ctx.globalAlpha = 1;
+
+  // Crack lines
+  if (crack > 0) {
+    ctx.strokeStyle = `rgba(255, 255, 255, ${crack})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(C-6, C-6); ctx.lineTo(C-5, C+6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(C+3, C-2); ctx.lineTo(C+9, C-1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(C-2, C+4); ctx.lineTo(C-1, C+12); ctx.stroke();
+  }
+
+  // Text
+  const words = ['FREEZE', 'NULL', '0x00', 'HALT', 'ICE_CORE'];
+  ctx.font = '8px Courier New';
+  words.forEach((word, i) => {
+    const angle = t * 0.7 + i * (Math.PI * 2 / words.size);
+    const orbitR = r + 28;
+    const wx = C + Math.cos(angle) * orbitR;
+    const wy = C + Math.sin(angle) * orbitR * 0.55;
+    ctx.fillStyle = 'rgba(100, 180, 255, 0.7)';
+    ctx.fillText(word, wx - 18, wy);
+  });
+}
+
+function render() {
+  const speed = parseInt(document.getElementById('speedSlider').value) / 100;
+  bossRadius = parseInt(document.getElementById('radiusSlider').value);
+  t += speed;
+  if (anim !== 'idle') animTimer += speed;
+
+  [aegisCtx, pyreCtx, casketCtx].forEach(ctx => {
+    ctx.clearRect(0, 0, 300, 300);
+  });
+
+  drawAegis(aegisCtx, t, bossRadius, anim);
+  drawPyre(pyreCtx, t, bossRadius, anim);
+  drawCasket(casketCtx, t, bossRadius, anim);
+
+  const overlayR = (bossRadius * 3).toFixed(0);
+  document.getElementById('aegis-size').textContent = `overlay: ${overlayR}px`;
+  document.getElementById('pyre-size').textContent = `overlay: ${overlayR}px`;
+  document.getElementById('casket-size').textContent = `overlay: ${overlayR}px`;
+
+  requestAnimationFrame(render);
+}
+
+render();
+</script>
+</body>
+</html>
